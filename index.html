@@ -365,11 +365,11 @@
         }
 
         .modal-body {
-            overflow-y: visible !important; /* Evita corte de scroll interno no PDF */
+            overflow-y: auto;
             font-size: 0.85rem;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             line-height: 1.4;
             padding: 4px;
         }
@@ -377,37 +377,39 @@
         .report-section-title {
             font-weight: bold;
             color: #334155;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 2px;
         }
 
         .report-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 6px;
         }
 
         .report-box {
             border-radius: 6px;
-            padding: 6px;
+            padding: 4px 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.85rem;
-            min-height: 45px;
-            border: 1px solid rgba(0,0,0,0.1);
+            font-size: 0.8rem;
+            min-width: 55px;
+            border: 1px solid rgba(0,0,0,0.15);
         }
         .report-box.box-visited { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
         .report-box.box-absent { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
-        .report-box.box-pending { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+        .report-box.box-pending { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
 
         .report-box-date {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: normal;
-            margin-top: 2px;
-            opacity: 0.85;
+            margin-top: 1px;
+            opacity: 0.9;
         }
 
         .modal-footer {
@@ -433,14 +435,14 @@
 
 <div class="container">
     <h1>BINGO - Controle de Visitas</h1>
-<br>
+
     <div class="month-selector">
         <label for="monthSelect" style="font-size: 0.85rem; font-weight: bold; color: #475569;">Mês de Referência:</label>
         <select id="monthSelect" onchange="switchMonth(this.value)"></select>
     </div>
 
     <div class="street-manager">
-        <input type="text" id="streetNameInput" placeholder="Digite o nome da rua">
+        <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
         <button type="button" onclick="addStreet()">+ Rua</button>
     </div>
 
@@ -491,21 +493,21 @@
             <button type="button" class="btn-delete-street" onclick="closeReport()" style="font-size: 1.2rem;">×</button>
         </div>
         
-        <div class="modal-body" id="pdfArea">
-            <div style="font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 2px;" id="pdfStreetName">Rua</div>
-            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 12px;" id="pdfMonthSubtitle">Mês: </div>
+        <div class="modal-body" id="pdfArea" style="background: #ffffff; padding: 10px;">
+            <div style="font-size: 1rem; font-weight: bold; color: #1e293b; margin-bottom: 2px;" id="pdfStreetName">Rua</div>
+            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 14px;" id="pdfMonthSubtitle">Mês: </div>
 
             <div>
                 <div class="report-section-title">✅ Casas Visitadas</div>
                 <div id="reportVisitedGrid" class="report-grid"></div>
             </div>
 
-            <div style="margin-top: 8px;">
+            <div style="margin-top: 10px;">
                 <div class="report-section-title">⚠️ Casas Ausentes</div>
                 <div id="reportAbsentGrid" class="report-grid"></div>
             </div>
 
-            <div style="margin-top: 8px;">
+            <div style="margin-top: 10px;">
                 <div class="report-section-title">⏳ Casas Pendentes</div>
                 <div id="reportPendingGrid" class="report-grid"></div>
             </div>
@@ -521,7 +523,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v13')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v14')) || {};
     } catch(e) {
         db = {};
     }
@@ -557,7 +559,7 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v13', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v14', JSON.stringify(db));
         } catch(e) {}
         render();
     }
@@ -788,10 +790,9 @@
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Adiciona um delay seguro para garantir que a renderização visual do relatório esteja completa antes de gerar o PDF
         setTimeout(() => {
             html2pdf().from(element).set(opt).save();
-        }, 400);
+        }, 500);
     }
 
     function formatMonthName(yearMonthStr) {
