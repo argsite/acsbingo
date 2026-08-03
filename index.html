@@ -121,7 +121,7 @@
 
         .street-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-bottom: 12px;
             background: #f8fafc;
@@ -130,20 +130,9 @@
             border-radius: 8px;
         }
 
-        .street-title-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .street-header span {
-            font-weight: bold;
-            font-size: 0.95rem;
-        }
-
         .street-actions {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
         }
 
@@ -151,28 +140,29 @@
             background: #0f172a;
             color: white;
             border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
             cursor: pointer;
+            font-weight: 600;
         }
 
         .btn-delete-street {
-            background: transparent;
-            border: none;
-            color: #64748b;
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: var(--danger);
             cursor: pointer;
-            font-size: 1rem;
-            padding: 4px;
-            border-radius: 4px;
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
         }
 
         .btn-delete-street:hover {
-            color: var(--danger);
-            background: rgba(220, 38, 38, 0.1);
+            background: #fecaca;
         }
 
         .number-adder {
@@ -455,12 +445,9 @@
 
     <div id="streetContent">
         <div class="street-header">
-            <div class="street-title-area">
-                <span id="currentStreetTitle">Rua</span>
-            </div>
             <div class="street-actions">
                 <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
-                <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()" title="Excluir Rua">🗑️</button>
+                <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()" title="Excluir Rua">🗑️ Excluir Rua</button>
             </div>
         </div>
 
@@ -490,7 +477,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="reportModalTitle">Relatório Visual da Rua</h2>
-            <button type="button" class="btn-delete-street" onclick="closeReport()" style="font-size: 1.2rem;">×</button>
+            <button type="button" class="btn-delete-street" onclick="closeReport()" style="font-size: 1.2rem; padding: 2px 8px;">×</button>
         </div>
         
         <div class="modal-body" id="pdfArea" style="background: #ffffff; padding: 10px;">
@@ -523,7 +510,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v14')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v15')) || {};
     } catch(e) {
         db = {};
     }
@@ -559,7 +546,7 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v14', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v15', JSON.stringify(db));
         } catch(e) {}
         render();
     }
@@ -809,10 +796,9 @@
         const streetSelect = document.getElementById('streetSelect');
         const housesGrid = document.getElementById('housesGrid');
         const streetContent = document.getElementById('streetContent');
-        const currentStreetTitle = document.getElementById('currentStreetTitle');
         const historyList = document.getElementById('historyList');
 
-        if (!monthSelect || !streetSelect || !housesGrid || !streetContent || !currentStreetTitle || !historyList) return;
+        if (!monthSelect || !streetSelect || !housesGrid || !streetContent || !historyList) return;
 
         let allMonths = Object.keys(db);
         if (!allMonths.includes(currentYearMonth)) {
@@ -852,8 +838,6 @@
             if (street === activeStreet) opt.selected = true;
             streetSelect.appendChild(opt);
         });
-
-        currentStreetTitle.innerText = activeStreet;
 
         housesGrid.innerHTML = '';
         const streetData = monthData.ruas[activeStreet];
