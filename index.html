@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BINGO - Controle de Visitas</title>
+    <title>Controle de Visitas - Saúde</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -44,7 +44,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             background: #e2e8f0;
             padding: 8px;
             border-radius: 8px;
@@ -88,12 +88,46 @@
             opacity: 0.8;
         }
 
+        /* Seletor de Ruas em formato Dropdown amigável para celular */
+        .street-selector-container {
+            margin-bottom: 16px;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .street-selector-container label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .street-selector-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .street-selector-row select {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            background: white;
+            color: var(--text);
+        }
+
         .street-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
-            background: #f1f5f9;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             padding: 8px 12px;
             border-radius: 8px;
         }
@@ -141,31 +175,6 @@
         .btn-delete-street:hover {
             color: var(--danger);
             background: rgba(220, 38, 38, 0.1);
-        }
-
-        .tabs {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .tab {
-            background: #e2e8f0;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #475569;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-
-        .tab.active {
-            background: var(--primary);
-            color: white;
         }
 
         .number-adder {
@@ -434,12 +443,19 @@
         <select id="monthSelect" onchange="switchMonth(this.value)"></select>
     </div>
 
+    <!-- Adicionar Nova Rua -->
     <div class="street-manager">
         <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
         <button type="button" onclick="addStreet()">+ Rua</button>
     </div>
 
-    <div class="tabs" id="tabsContainer"></div>
+    <!-- Seletor de Ruas em Menu Suspenso (Dropdown) para celular -->
+    <div class="street-selector-container">
+        <label for="streetSelect">Selecione a Rua:</label>
+        <div class="street-selector-row">
+            <select id="streetSelect" onchange="switchStreet(this.value)"></select>
+        </div>
+    </div>
 
     <div id="streetContent">
         <div class="street-header">
@@ -510,37 +526,31 @@
 </div>
 
 <script>
-    // Estrutura geral: { 'YYYY-MM': { ruas: { 'NomeRua': { houses: { '10': {status, date} }, history: [] } } } }
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v10')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v11')) || {};
     } catch(e) {
         db = {};
     }
 
-    // Identificar o mês atual no formato YYYY-MM
     const now = new Date();
     const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     
     let activeMonth = currentYearMonth;
     let activeStreet = null;
 
-    // Garantir que o mês atual existe no banco
     if (!db[activeMonth]) {
         db[activeMonth] = { ruas: {} };
     }
 
-    // Se houver meses anteriores, pega a lista de ruas globalmente ou do mês mais recente para herdar no novo mês
     function getOrCreateMonth(monthKey) {
         if (!db[monthKey]) {
-            // Herda as ruas do mês anterior ou do último disponível para não ter que recadastrar
             db[monthKey] = { ruas: {} };
             const allMonths = Object.keys(db).sort();
             if (allMonths.length > 1) {
                 const prevMonth = allMonths[allMonths.indexOf(monthKey) - 1];
                 if (prevMonth && db[prevMonth] && db[prevMonth].ruas) {
                     Object.keys(db[prevMonth].ruas).forEach(streetName => {
-                        // Copia apenas a estrutura das casas (nomes), mas com status zerado (pendente)
                         db[monthKey].ruas[streetName] = { houses: {}, history: [] };
                         Object.keys(db[prevMonth].ruas[streetName].houses).forEach(houseNum => {
                             db[monthKey].ruas[streetName].houses[houseNum] = { status: 0, date: null };
@@ -554,16 +564,15 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v10', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v11', JSON.stringify(db));
         } catch(e) {}
         render();
     }
 
     function switchMonth(newMonth) {
         activeMonth = newMonth;
-        getOrCreateMonth(activeMonth);
-        const ruas = db[activeMonth].ruas;
-        const streetKeys = Object.keys(ruas);
+        let monthData = getOrCreateMonth(activeMonth);
+        const streetKeys = Object.keys(monthData.ruas);
         activeStreet = streetKeys.length > 0 ? streetKeys[0] : null;
         render();
     }
@@ -800,20 +809,19 @@
 
     function render() {
         const monthSelect = document.getElementById('monthSelect');
-        const tabsContainer = document.getElementById('tabsContainer');
+        const streetSelect = document.getElementById('streetSelect');
         const housesGrid = document.getElementById('housesGrid');
         const streetContent = document.getElementById('streetContent');
         const currentStreetTitle = document.getElementById('currentStreetTitle');
         const historyList = document.getElementById('historyList');
 
-        if (!monthSelect || !tabsContainer || !housesGrid || !streetContent || !currentStreetTitle || !historyList) return;
+        if (!monthSelect || !streetSelect || !housesGrid || !streetContent || !currentStreetTitle || !historyList) return;
 
-        // Preencher o seletor de meses com os meses existentes no banco + o mês atual
         let allMonths = Object.keys(db);
         if (!allMonths.includes(currentYearMonth)) {
             allMonths.push(currentYearMonth);
         }
-        allMonths.sort().reverse(); // Mais recente primeiro
+        allMonths.sort().reverse();
 
         monthSelect.innerHTML = '';
         allMonths.forEach(m => {
@@ -825,12 +833,11 @@
         });
 
         let monthData = getOrCreateMonth(activeMonth);
-        tabsContainer.innerHTML = '';
         const streets = Object.keys(monthData.ruas);
 
         if (streets.length === 0) {
             streetContent.style.display = 'none';
-            tabsContainer.innerHTML = '<div class="empty-state" style="width:100%">Nenhuma rua cadastrada para este mês. Adicione uma acima.</div>';
+            streetSelect.innerHTML = '<option value="">Nenhuma rua cadastrada</option>';
             return;
         }
 
@@ -840,13 +847,13 @@
             activeStreet = streets[0];
         }
 
+        streetSelect.innerHTML = '';
         streets.forEach(street => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = `tab ${street === activeStreet ? 'active' : ''}`;
-            btn.innerText = street;
-            btn.onclick = () => switchStreet(street);
-            tabsContainer.appendChild(btn);
+            const opt = document.createElement('option');
+            opt.value = street;
+            opt.innerText = street;
+            if (street === activeStreet) opt.selected = true;
+            streetSelect.appendChild(opt);
         });
 
         currentStreetTitle.innerText = activeStreet;
