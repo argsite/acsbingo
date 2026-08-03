@@ -1,1153 +1,819 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de Visitas - Saúde</title>
-  <style>
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --success: #16a34a;
-      --success-dark: #15803d;
-      --warning: #ca8a04;
-      --warning-dark: #a16207;
-      --danger: #dc2626;
-      --danger-dark: #b91c1c;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --muted-bg: #f1f5f9;
-      --border: #cbd5e1;
-      --border-soft: #e2e8f0;
-      --text: #1e293b;
-      --text-muted: #64748b;
-      --text-soft: #94a3b8;
-      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-      --radius: 12px;
-      --radius-sm: 8px;
-      --radius-xs: 6px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Visitas - Saúde</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --warning: #ca8a04;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 16px;
+        }
 
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 16px;
-    }
+        h1 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            text-align: center;
+        }
 
-    h1, h2, h3, p {
-      margin: 0;
-    }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
 
-    button,
-    input {
-      font: inherit;
-    }
+        .street-manager {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-    button {
-      border: none;
-      cursor: pointer;
-      transition: 0.15s ease;
-    }
+        .street-manager input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
 
-    button:active {
-      transform: scale(0.98);
-    }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-    .container {
-      max-width: 680px;
-      margin: 0 auto;
-      background: var(--card-bg);
-      padding: 16px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
+        button:active {
+            opacity: 0.8;
+        }
 
-    h1 {
-      font-size: 1.25rem;
-      margin-bottom: 12px;
-      text-align: center;
-    }
+        .street-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
 
-    .street-manager,
-    .number-adder,
-    .modal-footer {
-      display: flex;
-      gap: 8px;
-    }
+        .street-title-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .street-manager,
-    .number-adder {
-      margin-bottom: 16px;
-    }
+        .street-header span {
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
 
-    .street-manager input,
-    .number-adder input {
-      flex: 1;
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xs);
-      font-size: 0.95rem;
-      background: white;
-    }
+        .street-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
 
-    .primary-btn {
-      background: var(--primary);
-      color: white;
-      padding: 10px 16px;
-      border-radius: var(--radius-xs);
-      font-weight: 600;
-    }
+        .btn-report {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
 
-    .primary-btn:hover {
-      background: var(--primary-dark);
-    }
+        .btn-delete-street {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .secondary-btn {
-      background: var(--text-muted);
-      color: white;
-      padding: 10px 16px;
-      border-radius: var(--radius-xs);
-      font-weight: 600;
-    }
+        .btn-delete-street:hover {
+            color: var(--danger);
+            background: rgba(220, 38, 38, 0.1);
+        }
 
-    .secondary-btn:hover {
-      background: #475569;
-    }
+        .tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-    .report-btn {
-      background: #0f172a;
-      color: white;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 600;
-    }
+        .tab {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #475569;
+            white-space: nowrap;
+            cursor: pointer;
+        }
 
-    .street-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-      background: var(--muted-bg);
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-    }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
 
-    .street-title-area {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-    }
+        .number-adder {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-    .street-title-area span {
-      font-weight: 700;
-      font-size: 0.98rem;
-      word-break: break-word;
-    }
+        .number-adder input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
 
-    .street-actions {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      flex-shrink: 0;
-    }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-    .icon-btn {
-      background: transparent;
-      color: var(--text-muted);
-      padding: 6px;
-      border-radius: 6px;
-      font-size: 1rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 34px;
-      min-height: 34px;
-    }
+        .house-box {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: all 0.1s ease;
+        }
 
-    .icon-btn:hover {
-      color: var(--danger);
-      background: rgba(220, 38, 38, 0.1);
-    }
+        .house-box.visited {
+            background: var(--success);
+            border-color: #15803d;
+            color: white;
+        }
 
-    .tabs {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-soft);
-    }
+        .house-box.absent {
+            background: var(--warning);
+            border-color: #a16207;
+            color: white;
+        }
 
-    .tab {
-      background: #e2e8f0;
-      color: #475569;
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      white-space: nowrap;
-    }
+        .delete-house {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
 
-    .tab.active {
-      background: var(--primary);
-      color: white;
-    }
+        .delete-house:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
-      gap: 8px;
-      margin-bottom: 16px;
-    }
+        .legend {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 16px;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .house-box {
-      background: #ffffff;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      min-height: 64px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      user-select: none;
-      position: relative;
-      transition: all 0.12s ease;
-      padding: 8px 6px;
-      text-align: center;
-      word-break: break-word;
-    }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-    .house-box:hover {
-      border-color: var(--primary);
-      transform: translateY(-1px);
-    }
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
 
-    .house-box.visited {
-      background: var(--success);
-      border-color: var(--success-dark);
-      color: white;
-    }
+        .history-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+        }
 
-    .house-box.absent {
-      background: var(--warning);
-      border-color: var(--warning-dark);
-      color: white;
-    }
+        .history-section h3 {
+            font-size: 0.9rem;
+            margin: 0 0 8px 0;
+            color: #475569;
+        }
 
-    .delete-house {
-      position: absolute;
-      top: 3px;
-      right: 4px;
-      font-size: 10px;
-      background: rgba(0, 0, 0, 0.22);
-      color: white;
-      border-radius: 999px;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-      padding: 0;
-    }
+        .history-list {
+            max-height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.8rem;
+        }
 
-    .delete-house:hover {
-      background: rgba(0, 0, 0, 0.5);
-    }
+        .history-item {
+            background: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .legend {
-      display: flex;
-      gap: 12px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+        .history-tag {
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        .tag-visited { background: #dcfce7; color: #166534; }
+        .tag-absent { background: #fef9c3; color: #854d0e; }
+        .tag-pending { background: #f1f5f9; color: #475569; }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+        .date-input {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 2px 4px;
+            font-size: 0.75rem;
+            font-family: inherit;
+            color: #475569;
+            background: #f8fafc;
+            cursor: pointer;
+        }
 
-    .color-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
+        /* Modal de Relatório Visual */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 16px;
+            box-sizing: border-box;
+        }
 
-    .history-section {
-      background: #f8fafc;
-      border: 1px solid var(--border-soft);
-      border-radius: 8px;
-      padding: 12px;
-      margin-top: 16px;
-    }
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 550px;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+        }
 
-    .history-section h3 {
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-      color: #475569;
-    }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
 
-    .history-list {
-      max-height: 260px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 0.82rem;
-    }
+        .modal-header h2 {
+            font-size: 1rem;
+            margin: 0;
+            color: var(--text);
+        }
 
-    .history-item {
-      background: white;
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-soft);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+        .modal-body {
+            overflow-y: auto;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            line-height: 1.4;
+            padding: 4px;
+        }
 
-    .history-item-text {
-      flex: 1;
-      min-width: 180px;
-    }
+        .report-section-title {
+            font-weight: bold;
+            color: #334155;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
 
-    .history-tag {
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-    }
+        /* Mini Grades Visuais para o Relatório */
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+            gap: 6px;
+        }
 
-    .tag-visited {
-      background: #dcfce7;
-      color: #166534;
-    }
+        .report-box {
+            border-radius: 6px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            min-height: 45px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .report-box.box-visited { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+        .report-box.box-absent { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
+        .report-box.box-pending { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
 
-    .tag-absent {
-      background: #fef9c3;
-      color: #854d0e;
-    }
+        .report-box-date {
+            font-size: 0.65rem;
+            font-weight: normal;
+            margin-top: 2px;
+            opacity: 0.85;
+        }
 
-    .tag-pending {
-      background: #f1f5f9;
-      color: #475569;
-    }
+        .modal-footer {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
 
-    .date-input {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 4px 6px;
-      font-size: 0.75rem;
-      color: #475569;
-      background: #f8fafc;
-    }
+        .modal-footer button {
+            flex: 1;
+        }
 
-    .empty-state {
-      text-align: center;
-      color: var(--text-muted);
-      padding: 24px;
-      font-size: 0.92rem;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 16px;
-    }
-
-    .modal.open {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      width: 100%;
-      max-width: 520px;
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      max-height: 90vh;
-      box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--border-soft);
-      padding-bottom: 8px;
-    }
-
-    .modal-header h2 {
-      font-size: 1rem;
-    }
-
-    .modal-body {
-      overflow-y: auto;
-      font-size: 0.87rem;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      line-height: 1.45;
-    }
-
-    .report-total {
-      font-size: 0.92rem;
-    }
-
-    .report-section {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .report-section-title {
-      font-weight: 700;
-      color: #334155;
-      border-bottom: 1px dashed var(--border);
-      padding-bottom: 2px;
-    }
-
-    .report-line {
-      color: var(--text-muted);
-      word-break: break-word;
-    }
-
-    .modal-footer {
-      margin-top: 16px;
-    }
-
-    .modal-footer button {
-      flex: 1;
-    }
-
-    .status-hint {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      margin-top: -4px;
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 560px) {
-      .street-header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .street-actions {
-        justify-content: flex-end;
-      }
-
-      .street-manager,
-      .number-adder,
-      .modal-footer {
-        flex-direction: column;
-      }
-
-      .modal-footer button {
-        width: 100%;
-      }
-    }
-  </style>
+        .empty-state {
+            text-align: center;
+            color: #64748b;
+            padding: 24px;
+            font-size: 0.9rem;
+        }
+    </style>
+    <!-- Biblioteca html2pdf para gerar o PDF fiel direto da tela do relatório -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-  <div class="container">
+
+<div class="container">
     <h1>Controle de Visitas - Saúde</h1>
 
     <div class="street-manager">
-      <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
-      <button type="button" id="addStreetBtn" class="primary-btn">+ Rua</button>
+        <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
+        <button type="button" onclick="addStreet()">+ Rua</button>
     </div>
 
     <div class="tabs" id="tabsContainer"></div>
 
     <div id="streetContent">
-      <div class="street-header">
-        <div class="street-title-area">
-          <span id="currentStreetTitle">Rua</span>
+        <div class="street-header">
+            <div class="street-title-area">
+                <span id="currentStreetTitle">Rua</span>
+            </div>
+            <div class="street-actions">
+                <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
+                <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()" title="Excluir Rua">🗑️</button>
+            </div>
         </div>
 
-        <div class="street-actions">
-          <button type="button" id="openReportBtn" class="report-btn">📄 Relatório</button>
-          <button type="button" id="deleteStreetBtn" class="icon-btn" title="Excluir Rua" aria-label="Excluir rua">🗑️</button>
+        <div class="number-adder">
+            <input type="text" id="houseNumberInput" placeholder="Números (ex: 10, 12, 14 ou 22A)">
+            <button type="button" onclick="addHouses()">Adicionar Casa(s)</button>
         </div>
-      </div>
 
-      <div class="number-adder">
-        <input type="text" id="houseNumberInput" placeholder="Números (ex: 10, 12, 14 ou 22A)">
-        <button type="button" id="addHousesBtn" class="primary-btn">Adicionar Casa(s)</button>
-      </div>
+        <div id="housesGrid" class="grid"></div>
 
-      <div class="status-hint">Toque na casa para alternar: Pendente → Visitada → Ausente</div>
-
-      <div id="housesGrid" class="grid"></div>
-
-      <div class="legend">
-        <div class="legend-item">
-          <div class="color-dot" style="background: #cbd5e1;"></div>
-          <span>Pendente</span>
+        <div class="legend">
+            <div class="legend-item"><div class="color-dot" style="background: #cbd5e1;"></div>Pendente</div>
+            <div class="legend-item"><div class="color-dot" style="background: var(--success);"></div>Visitada</div>
+            <div class="legend-item"><div class="color-dot" style="background: var(--warning);"></div>Ausente</div>
         </div>
-        <div class="legend-item">
-          <div class="color-dot" style="background: #16a34a;"></div>
-          <span>Visitada</span>
-        </div>
-        <div class="legend-item">
-          <div class="color-dot" style="background: #ca8a04;"></div>
-          <span>Ausente</span>
-        </div>
-      </div>
 
-      <div class="history-section">
-        <h3>Histórico de Ações (Rua Atual)</h3>
-        <div id="historyList" class="history-list">
-          <div class="empty-state">Nenhuma ação registrada neste mês.</div>
+        <div class="history-section">
+            <h3>Histórico de Ações (Rua Atual)</h3>
+            <div id="historyList" class="history-list">
+                <div style="color: #94a3b8; text-align: center; padding: 8px;">Nenhuma ação registrada neste mês.</div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <div id="reportModal" class="modal" aria-hidden="true">
-    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
-      <div class="modal-header">
-        <h2 id="reportModalTitle">Relatório da Rua</h2>
-        <button type="button" id="closeReportTopBtn" class="icon-btn" aria-label="Fechar relatório">×</button>
-      </div>
+<!-- Modal de Relatório Visual -->
+<div id="reportModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="reportModalTitle">Relatório Visual da Rua</h2>
+            <button type="button" class="btn-delete-street" onclick="closeReport()" style="font-size: 1.2rem;">×</button>
+        </div>
+        
+        <!-- Área que será impressa/exportada em PDF com o layout visual de blocos -->
+        <div class="modal-body" id="pdfArea">
+            <div style="font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 4px;" id="pdfStreetName">Rua</div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 12px;">Relatório de Status e Datas das Casas</div>
 
-      <div class="modal-body" id="reportModalBody"></div>
+            <!-- Seção Visitadas -->
+            <div>
+                <div class="report-section-title">✅ Casas Visitadas</div>
+                <div id="reportVisitedGrid" class="report-grid"></div>
+            </div>
 
-      <div class="modal-footer">
-        <button type="button" id="copyReportBtn" class="primary-btn">Copiar Relatório</button>
-        <button type="button" id="closeReportBtn" class="secondary-btn">Fechar</button>
-      </div>
+            <!-- Seção Ausentes -->
+            <div style="margin-top: 8px;">
+                <div class="report-section-title">⚠️ Casas Ausentes</div>
+                <div id="reportAbsentGrid" class="report-grid"></div>
+            </div>
+
+            <!-- Seção Pendentes -->
+            <div style="margin-top: 8px;">
+                <div class="report-section-title">⏳ Casas Pendentes</div>
+                <div id="reportPendingGrid" class="report-grid"></div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" onclick="downloadPDF()">Baixar PDF</button>
+            <button type="button" style="background: #64748b;" onclick="closeReport()">Fechar</button>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script>
-    const STORAGE_KEY = 'health_visits_data_v8';
+<script>
     let data = {};
+    try {
+        data = JSON.parse(localStorage.getItem('health_visits_data_v8')) || {};
+    } catch(e) {
+        data = {};
+    }
+    
     let activeStreet = null;
-
-    function loadData() {
-      try {
-        if (!window.localStorage) return {};
-        const raw = window.localStorage.getItem(STORAGE_KEY);
-        const parsed = raw ? JSON.parse(raw) : {};
-        return parsed && typeof parsed === 'object' ? parsed : {};
-      } catch (error) {
-        return {};
-      }
-    }
-
-    function persistData() {
-      try {
-        if (!window.localStorage) return;
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch (error) {
-      }
-    }
-
-    function getTodayISO() {
-      return new Date().toISOString().slice(0, 10);
-    }
-
-    function normalizeStreetName(name) {
-      return name.trim().replace(/s+/g, ' ');
-    }
-
-    function parseHouseNumbers(value) {
-      return value
-        .split(',')
-        .map(item => item.trim())
-        .filter(Boolean);
-    }
-
-    function compareHouseLabels(a, b) {
-      const aNum = parseInt(a, 10);
-      const bNum = parseInt(b, 10);
-      const aStartsNum = /^d+/.test(a);
-      const bStartsNum = /^d+/.test(b);
-
-      if (aStartsNum && bStartsNum && aNum !== bNum) {
-        return aNum - bNum;
-      }
-
-      return a.localeCompare(b, 'pt-BR', { numeric: true, sensitivity: 'base' });
-    }
-
-    function getStreetNames() {
-      return Object.keys(data).sort((a, b) =>
-        a.localeCompare(b, 'pt-BR', { sensitivity: 'base' })
-      );
-    }
-
-    function ensureStreetStructure(streetName) {
-      if (!data[streetName]) {
-        data[streetName] = { houses: {}, history: [] };
-      }
-
-      if (!data[streetName].houses || typeof data[streetName].houses !== 'object') {
-        data[streetName].houses = {};
-      }
-
-      if (!Array.isArray(data[streetName].history)) {
-        data[streetName].history = [];
-      }
+    const streetKeys = Object.keys(data);
+    if (streetKeys.length > 0) {
+        activeStreet = streetKeys[0];
     }
 
     function saveData() {
-      persistData();
-      render();
+        try {
+            localStorage.setItem('health_visits_data_v8', JSON.stringify(data));
+        } catch(e) {}
+        render();
     }
 
     function addStreet() {
-      const input = document.getElementById('streetNameInput');
-      if (!input) return;
+        const input = document.getElementById('streetNameInput');
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) return;
 
-      const name = normalizeStreetName(input.value);
-      if (!name) return;
-
-      const existingStreet = Object.keys(data).find(
-        street => street.toLowerCase() === name.toLowerCase()
-      );
-
-      const finalName = existingStreet || name;
-      ensureStreetStructure(finalName);
-
-      activeStreet = finalName;
-      input.value = '';
-      saveData();
+        if (!data[name]) {
+            data[name] = { houses: {}, history: [] };
+        }
+        activeStreet = name;
+        input.value = '';
+        saveData();
     }
 
     function deleteCurrentStreet() {
-      if (!activeStreet) return;
-
-      const confirmed = confirm(`Deseja realmente excluir a rua "${activeStreet}" e todo o seu histórico?`);
-      if (!confirmed) return;
-
-      delete data[activeStreet];
-      const streets = getStreetNames();
-      activeStreet = streets.length ? streets[0] : null;
-      saveData();
+        if (!activeStreet) return;
+        if (confirm(`Deseja realmente excluir a rua "${activeStreet}" e todo o seu histórico?`)) {
+            delete data[activeStreet];
+            const remaining = Object.keys(data);
+            activeStreet = remaining.length > 0 ? remaining[0] : null;
+            saveData();
+        }
     }
 
     function switchStreet(name) {
-      if (!data[name]) return;
-      activeStreet = name;
-      render();
+        activeStreet = name;
+        render();
     }
 
     function addHouses() {
-      if (!activeStreet) return;
+        if (!activeStreet) return;
+        const input = document.getElementById('houseNumberInput');
+        if (!input) return;
+        const val = input.value.trim();
+        if (!val) return;
 
-      const input = document.getElementById('houseNumberInput');
-      if (!input) return;
+        const numbers = val.split(',').map(n => n.trim()).filter(n => n !== '');
+        
+        numbers.forEach(num => {
+            if (!(num in data[activeStreet].houses)) {
+                data[activeStreet].houses[num] = { status: 0, date: null };
+            }
+        });
 
-      const values = parseHouseNumbers(input.value.trim());
-      if (!values.length) return;
-
-      ensureStreetStructure(activeStreet);
-
-      values.forEach(num => {
-        if (!(num in data[activeStreet].houses)) {
-          data[activeStreet].houses[num] = { status: 0, date: null };
-        }
-      });
-
-      input.value = '';
-      saveData();
+        input.value = '';
+        saveData();
     }
 
-    function getStatusMeta(status) {
-      if (status === 1) {
-        return { text: 'Visitada', tagClass: 'tag-visited', boxClass: 'visited' };
-      }
+    function cycleHouseStatus(num, event) {
+        if (event && event.target && event.target.classList.contains('delete-house')) return;
+        if (!activeStreet) return;
 
-      if (status === 2) {
-        return { text: 'Ausente', tagClass: 'tag-absent', boxClass: 'absent' };
-      }
+        let house = data[activeStreet].houses[num];
+        if (!house) return;
+        
+        let nextStatus = (house.status + 1) % 3; // 0 -> 1 -> 2 -> 0
+        
+        let now = new Date();
+        let year = now.getFullYear();
+        let month = String(now.getMonth() + 1).padStart(2, '0');
+        let day = String(now.getDate()).padStart(2, '0');
+        let dateStr = `${day}/${month}/${year}`;
 
-      return { text: 'Pendente', tagClass: 'tag-pending', boxClass: '' };
-    }
+        house.status = nextStatus;
+        house.date = (nextStatus !== 0) ? (house.date || dateStr) : null;
 
-    function cycleHouseStatus(houseNum) {
-      if (!activeStreet) return;
+        let statusText = 'Pendente';
+        let tagClass = 'tag-pending';
+        if (nextStatus === 1) { statusText = 'Visitada'; tagClass = 'tag-visited'; }
+        if (nextStatus === 2) { statusText = 'Ausente'; tagClass = 'tag-absent'; }
 
-      ensureStreetStructure(activeStreet);
-
-      const house = data[activeStreet].houses[houseNum];
-      if (!house) return;
-
-      const nextStatus = (house.status + 1) % 3;
-      house.status = nextStatus;
-      house.date = nextStatus === 0 ? null : (house.date || getTodayISO());
-
-      const history = data[activeStreet].history;
-      const existingIndex = history.findIndex(item => item.house === houseNum);
-      const meta = getStatusMeta(nextStatus);
-
-      if (nextStatus === 0) {
-        if (existingIndex !== -1) {
-          history.splice(existingIndex, 1);
+        if (!data[activeStreet].history) {
+            data[activeStreet].history = [];
         }
-      } else {
-        const entry = {
-          house: houseNum,
-          statusText: meta.text,
-          tagClass: meta.tagClass,
-          date: house.date
-        };
 
-        if (existingIndex !== -1) {
-          history[existingIndex] = entry;
+        let history = data[activeStreet].history;
+        let existingIndex = history.findIndex(item => item.house === num);
+
+        if (nextStatus === 0) {
+            if (existingIndex !== -1) {
+                history.splice(existingIndex, 1);
+            }
         } else {
-          history.unshift(entry);
+            if (existingIndex !== -1) {
+                history[existingIndex].statusText = statusText;
+                history[existingIndex].tagClass = tagClass;
+            } else {
+                history.unshift({
+                    house: num,
+                    statusText: statusText,
+                    tagClass: tagClass,
+                    date: house.date
+                });
+            }
         }
-      }
 
-      saveData();
+        saveData();
     }
 
     function updateHistoryDate(houseNum, newDate) {
-      if (!activeStreet) return;
+        if (!activeStreet) return;
+        
+        let streetData = data[activeStreet];
+        if (!streetData) return;
 
-      ensureStreetStructure(activeStreet);
-      const streetData = data[activeStreet];
+        // Converte AAAA-MM-DD para DD/MM/AAAA para ficar padronizado visualmente
+        let formattedDate = newDate;
+        if (newDate && newDate.includes('-')) {
+            let parts = newDate.split('-');
+            if (parts.length === 3) {
+                formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+        }
 
-      const historyItem = streetData.history.find(item => item.house === houseNum);
-      if (historyItem) {
-        historyItem.date = newDate || null;
-      }
+        if (streetData.history) {
+            let histItem = streetData.history.find(item => item.house === houseNum);
+            if (histItem) {
+                histItem.date = formattedDate;
+            }
+        }
 
-      if (streetData.houses[houseNum]) {
-        streetData.houses[houseNum].date = newDate || null;
-      }
+        if (streetData.houses && streetData.houses[houseNum]) {
+            streetData.houses[houseNum].date = formattedDate;
+        }
 
-      saveData();
+        saveData();
     }
 
-    function deleteHouse(houseNum, event) {
-      if (event) {
-        event.stopPropagation();
-      }
-
-      if (!activeStreet) return;
-
-      const confirmed = confirm(`Remover a casa ${houseNum}?`);
-      if (!confirmed) return;
-
-      ensureStreetStructure(activeStreet);
-
-      delete data[activeStreet].houses[houseNum];
-      data[activeStreet].history = data[activeStreet].history.filter(
-        item => item.house !== houseNum
-      );
-
-      saveData();
-    }
-
-    function buildReportData() {
-      if (!activeStreet || !data[activeStreet]) {
-        return {
-          total: 0,
-          visited: [],
-          absent: [],
-          pending: []
-        };
-      }
-
-      const streetData = data[activeStreet];
-      const visited = [];
-      const absent = [];
-      const pending = [];
-
-      Object.keys(streetData.houses || {})
-        .sort(compareHouseLabels)
-        .forEach(num => {
-          const house = streetData.houses[num];
-
-          if (house.status === 1) {
-            visited.push({ num, date: house.date });
-          } else if (house.status === 2) {
-            absent.push({ num, date: house.date });
-          } else {
-            pending.push({ num, date: house.date });
-          }
-        });
-
-      return {
-        total: Object.keys(streetData.houses || {}).length,
-        visited,
-        absent,
-        pending
-      };
-    }
-
-    function createReportSection(title, items, emptyText, formatter) {
-      const section = document.createElement('div');
-      section.className = 'report-section';
-
-      const titleEl = document.createElement('div');
-      titleEl.className = 'report-section-title';
-      titleEl.textContent = title;
-
-      const contentEl = document.createElement('div');
-      contentEl.className = 'report-line';
-
-      if (!items.length) {
-        contentEl.textContent = emptyText;
-      } else {
-        contentEl.textContent = items.map(formatter).join(', ');
-      }
-
-      section.appendChild(titleEl);
-      section.appendChild(contentEl);
-
-      return section;
+    function deleteHouse(num, event) {
+        if (event) event.stopPropagation();
+        if (!activeStreet) return;
+        if (confirm(`Remover a casa ${num}?`)) {
+            if (data[activeStreet].houses) {
+                delete data[activeStreet].houses[num];
+            }
+            if (data[activeStreet].history) {
+                data[activeStreet].history = data[activeStreet].history.filter(item => item.house !== num);
+            }
+            saveData();
+        }
     }
 
     function openReport() {
-      if (!activeStreet) return;
+        if (!activeStreet) return;
+        const streetData = data[activeStreet];
+        const modal = document.getElementById('reportModal');
+        const pdfStreetName = document.getElementById('pdfStreetName');
+        const visitedGrid = document.getElementById('reportVisitedGrid');
+        const absentGrid = document.getElementById('reportAbsentGrid');
+        const pendingGrid = document.getElementById('reportPendingGrid');
+        
+        if (!modal) return;
 
-      const modal = document.getElementById('reportModal');
-      const modalTitle = document.getElementById('reportModalTitle');
-      const modalBody = document.getElementById('reportModalBody');
+        pdfStreetName.innerText = `Rua: ${activeStreet}`;
 
-      if (!modal || !modalTitle || !modalBody) return;
+        let visited = [];
+        let absent = [];
+        let pending = [];
 
-      const report = buildReportData();
+        if (streetData.houses) {
+            Object.keys(streetData.houses).forEach(num => {
+                let h = streetData.houses[num];
+                if (h.status === 1) visited.push({ num, date: h.date || 'S/ Data' });
+                else if (h.status === 2) absent.push({ num, date: h.date || 'S/ Data' });
+                else pending.push(num);
+            });
+        }
 
-      modalTitle.textContent = `Relatório: ${activeStreet}`;
-      modalBody.innerHTML = '';
+        // Preencher grade de Visitadas
+        visitedGrid.innerHTML = visited.length === 0 ? '<div style="font-size:0.75rem; color:#64748b;">Nenhuma</div>' : '';
+        visited.forEach(v => {
+            let box = document.createElement('div');
+            box.className = 'report-box box-visited';
+            box.innerHTML = `<span>${v.num}</span><span class="report-box-date">${v.date}</span>`;
+            visitedGrid.appendChild(box);
+        });
 
-      const totalEl = document.createElement('div');
-      totalEl.className = 'report-total';
-      totalEl.innerHTML = `<strong>Total de Casas:</strong> ${report.total}`;
-      modalBody.appendChild(totalEl);
+        // Preencher grade de Ausentes
+        absentGrid.innerHTML = absent.length === 0 ? '<div style="font-size:0.75rem; color:#64748b;">Nenhuma</div>' : '';
+        absent.forEach(a => {
+            let box = document.createElement('div');
+            box.className = 'report-box box-absent';
+            box.innerHTML = `<span>${a.num}</span><span class="report-box-date">${a.date}</span>`;
+            absentGrid.appendChild(box);
+        });
 
-      modalBody.appendChild(
-        createReportSection(
-          `✅ Visitadas (${report.visited.length})`,
-          report.visited,
-          'Nenhuma casa visitada.',
-          item => `Casa ${item.num} (${item.date || 'Sem data'})`
-        )
-      );
+        // Preencher grade de Pendentes
+        pendingGrid.innerHTML = pending.length === 0 ? '<div style="font-size:0.75rem; color:#16a34a; font-weight:bold;">Todas visitadas!</div>' : '';
+        pending.forEach(p => {
+            let box = document.createElement('div');
+            box.className = 'report-box box-pending';
+            box.innerHTML = `<span>${p}</span><span class="report-box-date">Pendente</span>`;
+            pendingGrid.appendChild(box);
+        });
 
-      modalBody.appendChild(
-        createReportSection(
-          `⚠️ Ausentes (${report.absent.length})`,
-          report.absent,
-          'Nenhuma casa ausente.',
-          item => `Casa ${item.num} (${item.date || 'Sem data'})`
-        )
-      );
-
-      const pendingSection = createReportSection(
-        `⏳ Pendentes (${report.pending.length})`,
-        report.pending,
-        'Nenhuma casa pendente.',
-        item => `Casa ${item.num}`
-      );
-
-      if (report.pending.length === 0 && report.total > 0) {
-        const bonus = document.createElement('div');
-        bonus.className = 'report-line';
-        bonus.style.color = '#16a34a';
-        bonus.style.fontWeight = '700';
-        bonus.textContent = 'Todas as casas já foram tratadas nesta rua.';
-        pendingSection.appendChild(bonus);
-      }
-
-      modalBody.appendChild(pendingSection);
-
-      modal.classList.add('open');
-      modal.setAttribute('aria-hidden', 'false');
+        modal.style.display = 'flex';
     }
 
     function closeReport() {
-      const modal = document.getElementById('reportModal');
-      if (!modal) return;
-
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden', 'true');
+        const modal = document.getElementById('reportModal');
+        if (modal) modal.style.display = 'none';
     }
 
-    function copyReport() {
-      if (!activeStreet) return;
+    function downloadPDF() {
+        const element = document.getElementById('pdfArea');
+        const opt = {
+            margin:       10,
+            filename:     `relatorio_visitas_${activeStreet.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
 
-      const report = buildReportData();
-
-      let text = `RELATÓRIO DE VISITAS - ${activeStreet.toUpperCase()}
-
-`;
-      text += `Total de Casas: ${report.total}
-`;
-      text += `✅ Visitadas (${report.visited.length}): ${report.visited.length ? report.visited.map(item => `Casa ${item.num} (${item.date || 's/data'})`).join(', ') : 'Nenhuma'}
-`;
-      text += `⚠️ Ausentes (${report.absent.length}): ${report.absent.length ? report.absent.map(item => `Casa ${item.num} (${item.date || 's/data'})`).join(', ') : 'Nenhuma'}
-`;
-      text += `⏳ Pendentes (${report.pending.length}): ${report.pending.length ? report.pending.map(item => `Casa ${item.num}`).join(', ') : 'Nenhuma'}
-`;
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text)
-          .then(() => alert('Relatório copiado para a área de transferência!'))
-          .catch(() => alert(text));
-      } else {
-        alert(text);
-      }
-    }
-
-    function createHouseCard(houseNum, houseData) {
-      const meta = getStatusMeta(houseData.status);
-      const card = document.createElement('div');
-      card.className = `house-box ${meta.boxClass}`;
-      card.setAttribute('role', 'button');
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('aria-label', `Casa ${houseNum}, status ${meta.text}`);
-
-      const label = document.createElement('span');
-      label.textContent = houseNum;
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.type = 'button';
-      deleteBtn.className = 'delete-house';
-      deleteBtn.title = 'Excluir casa';
-      deleteBtn.setAttribute('aria-label', `Excluir casa ${houseNum}`);
-      deleteBtn.textContent = '×';
-
-      deleteBtn.addEventListener('click', event => {
-        deleteHouse(houseNum, event);
-      });
-
-      card.addEventListener('click', () => {
-        cycleHouseStatus(houseNum);
-      });
-
-      card.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          cycleHouseStatus(houseNum);
-        }
-      });
-
-      card.appendChild(label);
-      card.appendChild(deleteBtn);
-
-      return card;
-    }
-
-    function createHistoryItem(item) {
-      const row = document.createElement('div');
-      row.className = 'history-item';
-
-      const textWrap = document.createElement('div');
-      textWrap.className = 'history-item-text';
-
-      const prefix = document.createElement('span');
-      prefix.textContent = 'Casa ';
-
-      const strong = document.createElement('strong');
-      strong.textContent = item.house;
-
-      const middle = document.createElement('span');
-      middle.textContent = ' marcada como ';
-
-      const tag = document.createElement('span');
-      tag.className = `history-tag ${item.tagClass}`;
-      tag.textContent = item.statusText;
-
-      textWrap.appendChild(prefix);
-      textWrap.appendChild(strong);
-      textWrap.appendChild(middle);
-      textWrap.appendChild(tag);
-
-      const dateInput = document.createElement('input');
-      dateInput.type = 'date';
-      dateInput.className = 'date-input';
-      dateInput.value = item.date || '';
-      dateInput.addEventListener('change', function () {
-        updateHistoryDate(item.house, this.value);
-      });
-
-      row.appendChild(textWrap);
-      row.appendChild(dateInput);
-
-      return row;
-    }
-
-    function renderTabs(streets) {
-      const tabsContainer = document.getElementById('tabsContainer');
-      tabsContainer.innerHTML = '';
-
-      if (!streets.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.style.width = '100%';
-        empty.textContent = 'Nenhuma rua cadastrada. Adicione uma acima.';
-        tabsContainer.appendChild(empty);
-        return;
-      }
-
-      streets.forEach(street => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `tab ${street === activeStreet ? 'active' : ''}`;
-        btn.textContent = street;
-        btn.addEventListener('click', () => switchStreet(street));
-        tabsContainer.appendChild(btn);
-      });
-    }
-
-    function renderHouses(streetData) {
-      const housesGrid = document.getElementById('housesGrid');
-      housesGrid.innerHTML = '';
-
-      const houseKeys = Object.keys(streetData.houses || {}).sort(compareHouseLabels);
-
-      if (!houseKeys.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.style.gridColumn = '1 / -1';
-        empty.textContent = 'Nenhuma casa cadastrada nesta rua. Digite os números acima.';
-        housesGrid.appendChild(empty);
-        return;
-      }
-
-      houseKeys.forEach(num => {
-        housesGrid.appendChild(createHouseCard(num, streetData.houses[num]));
-      });
-    }
-
-    function renderHistory(streetData) {
-      const historyList = document.getElementById('historyList');
-      historyList.innerHTML = '';
-
-      if (!streetData.history || !streetData.history.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.textContent = 'Nenhuma ação registrada recentemente.';
-        historyList.appendChild(empty);
-        return;
-      }
-
-      streetData.history.forEach(item => {
-        historyList.appendChild(createHistoryItem(item));
-      });
+        html2pdf().from(element).set(opt).save();
     }
 
     function render() {
-      const streetContent = document.getElementById('streetContent');
-      const currentStreetTitle = document.getElementById('currentStreetTitle');
-      const streets = getStreetNames();
+        const tabsContainer = document.getElementById('tabsContainer');
+        const housesGrid = document.getElementById('housesGrid');
+        const streetContent = document.getElementById('streetContent');
+        const currentStreetTitle = document.getElementById('currentStreetTitle');
+        const historyList = document.getElementById('historyList');
 
-      renderTabs(streets);
+        if (!tabsContainer || !housesGrid || !streetContent || !currentStreetTitle || !historyList) return;
 
-      if (!streets.length) {
-        streetContent.style.display = 'none';
-        return;
-      }
+        tabsContainer.innerHTML = '';
+        const streets = Object.keys(data);
 
-      if (!activeStreet || !data[activeStreet]) {
-        activeStreet = streets[0];
-      }
+        if (streets.length === 0) {
+            streetContent.style.display = 'none';
+            tabsContainer.innerHTML = '<div class="empty-state" style="width:100%">Nenhuma rua cadastrada. Adicione uma acima.</div>';
+            return;
+        }
 
-      ensureStreetStructure(activeStreet);
+        streetContent.style.display = 'block';
 
-      streetContent.style.display = 'block';
-      currentStreetTitle.textContent = activeStreet;
+        if (!activeStreet || !data[activeStreet]) {
+            activeStreet = streets[0];
+        }
 
-      const streetData = data[activeStreet];
-      renderHouses(streetData);
-      renderHistory(streetData);
+        streets.forEach(street => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `tab ${street === activeStreet ? 'active' : ''}`;
+            btn.innerText = street;
+            btn.onclick = () => switchStreet(street);
+            tabsContainer.appendChild(btn);
+        });
+
+        currentStreetTitle.innerText = activeStreet;
+
+        housesGrid.innerHTML = '';
+        const streetData = data[activeStreet];
+        const houseKeys = streetData && streetData.houses ? Object.keys(streetData.houses) : [];
+
+        if (houseKeys.length === 0) {
+            housesGrid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhuma casa cadastrada nesta rua. Digite os números acima.</div>';
+        } else {
+            houseKeys.forEach(num => {
+                const house = streetData.houses[num];
+                const div = document.createElement('div');
+                
+                let statusClass = '';
+                if (house && house.status === 1) statusClass = 'visited';
+                if (house && house.status === 2) statusClass = 'absent';
+
+                div.className = `house-box ${statusClass}`;
+                div.innerHTML = `
+                    <span>${num}</span>
+                    <button type="button" class="delete-house" onclick="deleteHouse('${num}', event)" title="Excluir casa">×</button>
+                `;
+                div.onclick = (e) => cycleHouseStatus(num, e);
+                housesGrid.appendChild(div);
+            });
+        }
+
+        historyList.innerHTML = '';
+        if (!streetData.history || streetData.history.length === 0) {
+            historyList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 8px;">Nenhuma ação registrada recentemente.</div>';
+        } else {
+            streetData.history.forEach((item) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                // Converte DD/MM/AAAA para AAAA-MM-DD para exibir corretamente no input type="date"
+                let dateVal = '';
+                if (item.date && item.date.includes('/')) {
+                    let parts = item.date.split('/');
+                    if (parts.length === 3) {
+                        dateVal = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    }
+                }
+
+                historyItem.innerHTML = `
+                    <span>Casa <strong>${item.house}</strong> marcada como <span class="history-tag ${item.tagClass}">${item.statusText}</span></span>
+                    <input type="date" class="date-input" value="${dateVal}" onchange="updateHistoryDate('${item.house}', this.value)">
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
     }
 
-    function bindEvents() {
-      const addStreetBtn = document.getElementById('addStreetBtn');
-      const addHousesBtn = document.getElementById('addHousesBtn');
-      const deleteStreetBtn = document.getElementById('deleteStreetBtn');
-      const openReportBtn = document.getElementById('openReportBtn');
-      const closeReportBtn = document.getElementById('closeReportBtn');
-      const closeReportTopBtn = document.getElementById('closeReportTopBtn');
-      const copyReportBtn = document.getElementById('copyReportBtn');
-      const streetNameInput = document.getElementById('streetNameInput');
-      const houseNumberInput = document.getElementById('houseNumberInput');
-      const reportModal = document.getElementById('reportModal');
-      const modalContent = reportModal.querySelector('.modal-content');
+    window.onload = function() {
+        render();
+    };
+</script>
 
-      addStreetBtn.addEventListener('click', addStreet);
-      addHousesBtn.addEventListener('click', addHouses);
-      deleteStreetBtn.addEventListener('click', deleteCurrentStreet);
-      openReportBtn.addEventListener('click', openReport);
-      closeReportBtn.addEventListener('click', closeReport);
-      closeReportTopBtn.addEventListener('click', closeReport);
-      copyReportBtn.addEventListener('click', copyReport);
-
-      streetNameInput.addEventListener('keydown', event => {
-        if (event.key === 'Enter') {
-          addStreet();
-        }
-      });
-
-      houseNumberInput.addEventListener('keydown', event => {
-        if (event.key === 'Enter') {
-          addHouses();
-        }
-      });
-
-      reportModal.addEventListener('click', () => {
-        closeReport();
-      });
-
-      modalContent.addEventListener('click', event => {
-        event.stopPropagation();
-      });
-
-      document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') {
-          closeReport();
-        }
-      });
-    }
-
-    function init() {
-      data = loadData();
-      const streets = getStreetNames();
-      activeStreet = streets.length ? streets[0] : null;
-      bindEvents();
-      render();
-    }
-
-    window.addEventListener('load', init);
-  </script>
 </body>
 </html>
