@@ -38,7 +38,6 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
 
-        /* Seletor de Mês no Topo */
         .month-selector {
             display: flex;
             justify-content: center;
@@ -88,7 +87,6 @@
             opacity: 0.8;
         }
 
-        /* Seletor de Ruas em formato Dropdown amigável para celular */
         .street-selector-container {
             margin-bottom: 16px;
             background: #f1f5f9;
@@ -324,7 +322,6 @@
             cursor: pointer;
         }
 
-        /* Modal de Relatório Visual */
         .modal {
             display: none;
             position: fixed;
@@ -368,7 +365,7 @@
         }
 
         .modal-body {
-            overflow-y: auto;
+            overflow-y: visible !important; /* Evita corte de scroll interno no PDF */
             font-size: 0.85rem;
             display: flex;
             flex-direction: column;
@@ -437,19 +434,16 @@
 <div class="container">
     <h1>BINGO - Controle de Visitas</h1>
 
-    <!-- Seletor de Mês -->
     <div class="month-selector">
         <label for="monthSelect" style="font-size: 0.85rem; font-weight: bold; color: #475569;">Mês de Referência:</label>
         <select id="monthSelect" onchange="switchMonth(this.value)"></select>
     </div>
 
-    <!-- Adicionar Nova Rua -->
     <div class="street-manager">
         <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
         <button type="button" onclick="addStreet()">+ Rua</button>
     </div>
 
-    <!-- Seletor de Ruas em Menu Suspenso (Dropdown) para celular -->
     <div class="street-selector-container">
         <label for="streetSelect">Selecione a Rua:</label>
         <div class="street-selector-row">
@@ -490,7 +484,6 @@
     </div>
 </div>
 
-<!-- Modal de Relatório Visual -->
 <div id="reportModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -528,7 +521,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v11')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v13')) || {};
     } catch(e) {
         db = {};
     }
@@ -564,7 +557,7 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v11', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v13', JSON.stringify(db));
         } catch(e) {}
         render();
     }
@@ -791,11 +784,14 @@
             margin:       10,
             filename:     `relatorio_${activeStreet.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_')}_${activeMonth}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
+            html2canvas:  { scale: 2, useCORS: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().from(element).set(opt).save();
+        // Adiciona um delay seguro para garantir que a renderização visual do relatório esteja completa antes de gerar o PDF
+        setTimeout(() => {
+            html2pdf().from(element).set(opt).save();
+        }, 400);
     }
 
     function formatMonthName(yearMonthStr) {
