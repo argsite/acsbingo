@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Visitas - Saúde</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #16a34a;
+      --success-dark: #15803d;
+      --warning: #ca8a04;
+      --warning-dark: #a16207;
+      --danger: #dc2626;
+      --danger-dark: #b91c1c;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --muted-bg: #f1f5f9;
+      --border: #cbd5e1;
+      --border-soft: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-xs: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .street-manager,
+    .number-adder,
+    .modal-footer {
+      display: flex;
+      gap: 8px;
+    }
+
+    .street-manager,
+    .number-adder {
+      margin-bottom: 16px;
+    }
+
+    .street-manager input,
+    .number-adder input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      font-size: 0.95rem;
+      background: white;
+    }
+
+    .primary-btn {
+      background: var(--primary);
+      color: white;
+      padding: 10px 16px;
+      border-radius: var(--radius-xs);
+      font-weight: 600;
+    }
+
+    .primary-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary-btn {
+      background: var(--text-muted);
+      color: white;
+      padding: 10px 16px;
+      border-radius: var(--radius-xs);
+      font-weight: 600;
+    }
+
+    .secondary-btn:hover {
+      background: #475569;
+    }
+
+    .report-btn {
+      background: #0f172a;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .street-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      background: var(--muted-bg);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    .street-title-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .street-title-area span {
+      font-weight: 700;
+      font-size: 0.98rem;
+      word-break: break-word;
+    }
+
+    .street-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      min-height: 34px;
+    }
+
+    .icon-btn:hover {
+      color: var(--danger);
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .tab {
+      background: #e2e8f0;
+      color: #475569;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .house-box {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      min-height: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: all 0.12s ease;
+      padding: 8px 6px;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .house-box:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .house-box.visited {
+      background: var(--success);
+      border-color: var(--success-dark);
+      color: white;
+    }
+
+    .house-box.absent {
+      background: var(--warning);
+      border-color: var(--warning-dark);
+      color: white;
+    }
+
+    .delete-house {
+      position: absolute;
+      top: 3px;
+      right: 4px;
+      font-size: 10px;
+      background: rgba(0, 0, 0, 0.22);
+      color: white;
+      border-radius: 999px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .delete-house:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .history-section {
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 16px;
+    }
+
+    .history-section h3 {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      color: #475569;
+    }
+
+    .history-list {
+      max-height: 260px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.82rem;
+    }
+
+    .history-item {
+      background: white;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .history-item-text {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .history-tag {
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    .tag-visited {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .tag-absent {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .tag-pending {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .date-input {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 0.75rem;
+      color: #475569;
+      background: #f8fafc;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 24px;
+      font-size: 0.92rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 520px;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+      box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 8px;
+    }
+
+    .modal-header h2 {
+      font-size: 1rem;
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      font-size: 0.87rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      line-height: 1.45;
+    }
+
+    .report-total {
+      font-size: 0.92rem;
+    }
+
+    .report-section {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .report-section-title {
+      font-weight: 700;
+      color: #334155;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 2px;
+    }
+
+    .report-line {
+      color: var(--text-muted);
+      word-break: break-word;
+    }
+
+    .modal-footer {
+      margin-top: 16px;
+    }
+
+    .modal-footer button {
+      flex: 1;
+    }
+
+    .status-hint {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: -4px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .street-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .street-actions {
+        justify-content: flex-end;
+      }
+
+      .street-manager,
+      .number-adder,
+      .modal-footer {
+        flex-direction: column;
+      }
+
+      .modal-footer button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Controle de Visitas - Saúde</h1>
+
+    <div class="street-manager">
+      <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
+      <button type="button" id="addStreetBtn" class="primary-btn">+ Rua</button>
+    </div>
+
+    <div class="tabs" id="tabsContainer"></div>
+
+    <div id="streetContent">
+      <div class="street-header">
+        <div class="street-title-area">
+          <span id="currentStreetTitle">Rua</span>
+        </div>
+
+        <div class="street-actions">
+          <button type="button" id="openReportBtn" class="report-btn">📄 Relatório</button>
+          <button type="button" id="deleteStreetBtn" class="icon-btn" title="Excluir Rua" aria-label="Excluir rua">🗑️</button>
+        </div>
+      </div>
+
+      <div class="number-adder">
+        <input type="text" id="houseNumberInput" placeholder="Números (ex: 10, 12, 14 ou 22A)">
+        <button type="button" id="addHousesBtn" class="primary-btn">Adicionar Casa(s)</button>
+      </div>
+
+      <div class="status-hint">Toque na casa para alternar: Pendente → Visitada → Ausente</div>
+
+      <div id="housesGrid" class="grid"></div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="color-dot" style="background: #cbd5e1;"></div>
+          <span>Pendente</span>
+        </div>
+        <div class="legend-item">
+          <div class="color-dot" style="background: #16a34a;"></div>
+          <span>Visitada</span>
+        </div>
+        <div class="legend-item">
+          <div class="color-dot" style="background: #ca8a04;"></div>
+          <span>Ausente</span>
+        </div>
+      </div>
+
+      <div class="history-section">
+        <h3>Histórico de Ações (Rua Atual)</h3>
+        <div id="historyList" class="history-list">
+          <div class="empty-state">Nenhuma ação registrada neste mês.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="reportModal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+      <div class="modal-header">
+        <h2 id="reportModalTitle">Relatório da Rua</h2>
+        <button type="button" id="closeReportTopBtn" class="icon-btn" aria-label="Fechar relatório">×</button>
+      </div>
+
+      <div class="modal-body" id="reportModalBody"></div>
+
+      <div class="modal-footer">
+        <button type="button" id="copyReportBtn" class="primary-btn">Copiar Relatório</button>
+        <button type="button" id="closeReportBtn" class="secondary-btn">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'health_visits_data_v8';
+    let data = {};
+    let activeStreet = null;
+
+    function loadData() {
+      try {
+        if (!window.localStorage) return {};
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function persistData() {
+      try {
+        if (!window.localStorage) return;
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (error) {
+      }
+    }
+
+    function getTodayISO() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function normalizeStreetName(name) {
+      return name.trim().replace(/s+/g, ' ');
+    }
+
+    function parseHouseNumbers(value) {
+      return value
+        .split(',')
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function compareHouseLabels(a, b) {
+      const aNum = parseInt(a, 10);
+      const bNum = parseInt(b, 10);
+      const aStartsNum = /^d+/.test(a);
+      const bStartsNum = /^d+/.test(b);
+
+      if (aStartsNum && bStartsNum && aNum !== bNum) {
+        return aNum - bNum;
+      }
+
+      return a.localeCompare(b, 'pt-BR', { numeric: true, sensitivity: 'base' });
+    }
+
+    function getStreetNames() {
+      return Object.keys(data).sort((a, b) =>
+        a.localeCompare(b, 'pt-BR', { sensitivity: 'base' })
+      );
+    }
+
+    function ensureStreetStructure(streetName) {
+      if (!data[streetName]) {
+        data[streetName] = { houses: {}, history: [] };
+      }
+
+      if (!data[streetName].houses || typeof data[streetName].houses !== 'object') {
+        data[streetName].houses = {};
+      }
+
+      if (!Array.isArray(data[streetName].history)) {
+        data[streetName].history = [];
+      }
+    }
+
+    function saveData() {
+      persistData();
+      render();
+    }
+
+    function addStreet() {
+      const input = document.getElementById('streetNameInput');
+      if (!input) return;
+
+      const name = normalizeStreetName(input.value);
+      if (!name) return;
+
+      const existingStreet = Object.keys(data).find(
+        street => street.toLowerCase() === name.toLowerCase()
+      );
+
+      const finalName = existingStreet || name;
+      ensureStreetStructure(finalName);
+
+      activeStreet = finalName;
+      input.value = '';
+      saveData();
+    }
+
+    function deleteCurrentStreet() {
+      if (!activeStreet) return;
+
+      const confirmed = confirm(`Deseja realmente excluir a rua "${activeStreet}" e todo o seu histórico?`);
+      if (!confirmed) return;
+
+      delete data[activeStreet];
+      const streets = getStreetNames();
+      activeStreet = streets.length ? streets[0] : null;
+      saveData();
+    }
+
+    function switchStreet(name) {
+      if (!data[name]) return;
+      activeStreet = name;
+      render();
+    }
+
+    function addHouses() {
+      if (!activeStreet) return;
+
+      const input = document.getElementById('houseNumberInput');
+      if (!input) return;
+
+      const values = parseHouseNumbers(input.value.trim());
+      if (!values.length) return;
+
+      ensureStreetStructure(activeStreet);
+
+      values.forEach(num => {
+        if (!(num in data[activeStreet].houses)) {
+          data[activeStreet].houses[num] = { status: 0, date: null };
+        }
+      });
+
+      input.value = '';
+      saveData();
+    }
+
+    function getStatusMeta(status) {
+      if (status === 1) {
+        return { text: 'Visitada', tagClass: 'tag-visited', boxClass: 'visited' };
+      }
+
+      if (status === 2) {
+        return { text: 'Ausente', tagClass: 'tag-absent', boxClass: 'absent' };
+      }
+
+      return { text: 'Pendente', tagClass: 'tag-pending', boxClass: '' };
+    }
+
+    function cycleHouseStatus(houseNum) {
+      if (!activeStreet) return;
+
+      ensureStreetStructure(activeStreet);
+
+      const house = data[activeStreet].houses[houseNum];
+      if (!house) return;
+
+      const nextStatus = (house.status + 1) % 3;
+      house.status = nextStatus;
+      house.date = nextStatus === 0 ? null : (house.date || getTodayISO());
+
+      const history = data[activeStreet].history;
+      const existingIndex = history.findIndex(item => item.house === houseNum);
+      const meta = getStatusMeta(nextStatus);
+
+      if (nextStatus === 0) {
+        if (existingIndex !== -1) {
+          history.splice(existingIndex, 1);
+        }
+      } else {
+        const entry = {
+          house: houseNum,
+          statusText: meta.text,
+          tagClass: meta.tagClass,
+          date: house.date
+        };
+
+        if (existingIndex !== -1) {
+          history[existingIndex] = entry;
+        } else {
+          history.unshift(entry);
+        }
+      }
+
+      saveData();
+    }
+
+    function updateHistoryDate(houseNum, newDate) {
+      if (!activeStreet) return;
+
+      ensureStreetStructure(activeStreet);
+      const streetData = data[activeStreet];
+
+      const historyItem = streetData.history.find(item => item.house === houseNum);
+      if (historyItem) {
+        historyItem.date = newDate || null;
+      }
+
+      if (streetData.houses[houseNum]) {
+        streetData.houses[houseNum].date = newDate || null;
+      }
+
+      saveData();
+    }
+
+    function deleteHouse(houseNum, event) {
+      if (event) {
+        event.stopPropagation();
+      }
+
+      if (!activeStreet) return;
+
+      const confirmed = confirm(`Remover a casa ${houseNum}?`);
+      if (!confirmed) return;
+
+      ensureStreetStructure(activeStreet);
+
+      delete data[activeStreet].houses[houseNum];
+      data[activeStreet].history = data[activeStreet].history.filter(
+        item => item.house !== houseNum
+      );
+
+      saveData();
+    }
+
+    function buildReportData() {
+      if (!activeStreet || !data[activeStreet]) {
+        return {
+          total: 0,
+          visited: [],
+          absent: [],
+          pending: []
+        };
+      }
+
+      const streetData = data[activeStreet];
+      const visited = [];
+      const absent = [];
+      const pending = [];
+
+      Object.keys(streetData.houses || {})
+        .sort(compareHouseLabels)
+        .forEach(num => {
+          const house = streetData.houses[num];
+
+          if (house.status === 1) {
+            visited.push({ num, date: house.date });
+          } else if (house.status === 2) {
+            absent.push({ num, date: house.date });
+          } else {
+            pending.push({ num, date: house.date });
+          }
+        });
+
+      return {
+        total: Object.keys(streetData.houses || {}).length,
+        visited,
+        absent,
+        pending
+      };
+    }
+
+    function createReportSection(title, items, emptyText, formatter) {
+      const section = document.createElement('div');
+      section.className = 'report-section';
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'report-section-title';
+      titleEl.textContent = title;
+
+      const contentEl = document.createElement('div');
+      contentEl.className = 'report-line';
+
+      if (!items.length) {
+        contentEl.textContent = emptyText;
+      } else {
+        contentEl.textContent = items.map(formatter).join(', ');
+      }
+
+      section.appendChild(titleEl);
+      section.appendChild(contentEl);
+
+      return section;
+    }
+
+    function openReport() {
+      if (!activeStreet) return;
+
+      const modal = document.getElementById('reportModal');
+      const modalTitle = document.getElementById('reportModalTitle');
+      const modalBody = document.getElementById('reportModalBody');
+
+      if (!modal || !modalTitle || !modalBody) return;
+
+      const report = buildReportData();
+
+      modalTitle.textContent = `Relatório: ${activeStreet}`;
+      modalBody.innerHTML = '';
+
+      const totalEl = document.createElement('div');
+      totalEl.className = 'report-total';
+      totalEl.innerHTML = `<strong>Total de Casas:</strong> ${report.total}`;
+      modalBody.appendChild(totalEl);
+
+      modalBody.appendChild(
+        createReportSection(
+          `✅ Visitadas (${report.visited.length})`,
+          report.visited,
+          'Nenhuma casa visitada.',
+          item => `Casa ${item.num} (${item.date || 'Sem data'})`
+        )
+      );
+
+      modalBody.appendChild(
+        createReportSection(
+          `⚠️ Ausentes (${report.absent.length})`,
+          report.absent,
+          'Nenhuma casa ausente.',
+          item => `Casa ${item.num} (${item.date || 'Sem data'})`
+        )
+      );
+
+      const pendingSection = createReportSection(
+        `⏳ Pendentes (${report.pending.length})`,
+        report.pending,
+        'Nenhuma casa pendente.',
+        item => `Casa ${item.num}`
+      );
+
+      if (report.pending.length === 0 && report.total > 0) {
+        const bonus = document.createElement('div');
+        bonus.className = 'report-line';
+        bonus.style.color = '#16a34a';
+        bonus.style.fontWeight = '700';
+        bonus.textContent = 'Todas as casas já foram tratadas nesta rua.';
+        pendingSection.appendChild(bonus);
+      }
+
+      modalBody.appendChild(pendingSection);
+
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeReport() {
+      const modal = document.getElementById('reportModal');
+      if (!modal) return;
+
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function copyReport() {
+      if (!activeStreet) return;
+
+      const report = buildReportData();
+
+      let text = `RELATÓRIO DE VISITAS - ${activeStreet.toUpperCase()}
+
+`;
+      text += `Total de Casas: ${report.total}
+`;
+      text += `✅ Visitadas (${report.visited.length}): ${report.visited.length ? report.visited.map(item => `Casa ${item.num} (${item.date || 's/data'})`).join(', ') : 'Nenhuma'}
+`;
+      text += `⚠️ Ausentes (${report.absent.length}): ${report.absent.length ? report.absent.map(item => `Casa ${item.num} (${item.date || 's/data'})`).join(', ') : 'Nenhuma'}
+`;
+      text += `⏳ Pendentes (${report.pending.length}): ${report.pending.length ? report.pending.map(item => `Casa ${item.num}`).join(', ') : 'Nenhuma'}
+`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => alert('Relatório copiado para a área de transferência!'))
+          .catch(() => alert(text));
+      } else {
+        alert(text);
+      }
+    }
+
+    function createHouseCard(houseNum, houseData) {
+      const meta = getStatusMeta(houseData.status);
+      const card = document.createElement('div');
+      card.className = `house-box ${meta.boxClass}`;
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `Casa ${houseNum}, status ${meta.text}`);
+
+      const label = document.createElement('span');
+      label.textContent = houseNum;
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'delete-house';
+      deleteBtn.title = 'Excluir casa';
+      deleteBtn.setAttribute('aria-label', `Excluir casa ${houseNum}`);
+      deleteBtn.textContent = '×';
+
+      deleteBtn.addEventListener('click', event => {
+        deleteHouse(houseNum, event);
+      });
+
+      card.addEventListener('click', () => {
+        cycleHouseStatus(houseNum);
+      });
+
+      card.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          cycleHouseStatus(houseNum);
+        }
+      });
+
+      card.appendChild(label);
+      card.appendChild(deleteBtn);
+
+      return card;
+    }
+
+    function createHistoryItem(item) {
+      const row = document.createElement('div');
+      row.className = 'history-item';
+
+      const textWrap = document.createElement('div');
+      textWrap.className = 'history-item-text';
+
+      const prefix = document.createElement('span');
+      prefix.textContent = 'Casa ';
+
+      const strong = document.createElement('strong');
+      strong.textContent = item.house;
+
+      const middle = document.createElement('span');
+      middle.textContent = ' marcada como ';
+
+      const tag = document.createElement('span');
+      tag.className = `history-tag ${item.tagClass}`;
+      tag.textContent = item.statusText;
+
+      textWrap.appendChild(prefix);
+      textWrap.appendChild(strong);
+      textWrap.appendChild(middle);
+      textWrap.appendChild(tag);
+
+      const dateInput = document.createElement('input');
+      dateInput.type = 'date';
+      dateInput.className = 'date-input';
+      dateInput.value = item.date || '';
+      dateInput.addEventListener('change', function () {
+        updateHistoryDate(item.house, this.value);
+      });
+
+      row.appendChild(textWrap);
+      row.appendChild(dateInput);
+
+      return row;
+    }
+
+    function renderTabs(streets) {
+      const tabsContainer = document.getElementById('tabsContainer');
+      tabsContainer.innerHTML = '';
+
+      if (!streets.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.style.width = '100%';
+        empty.textContent = 'Nenhuma rua cadastrada. Adicione uma acima.';
+        tabsContainer.appendChild(empty);
+        return;
+      }
+
+      streets.forEach(street => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `tab ${street === activeStreet ? 'active' : ''}`;
+        btn.textContent = street;
+        btn.addEventListener('click', () => switchStreet(street));
+        tabsContainer.appendChild(btn);
+      });
+    }
+
+    function renderHouses(streetData) {
+      const housesGrid = document.getElementById('housesGrid');
+      housesGrid.innerHTML = '';
+
+      const houseKeys = Object.keys(streetData.houses || {}).sort(compareHouseLabels);
+
+      if (!houseKeys.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.style.gridColumn = '1 / -1';
+        empty.textContent = 'Nenhuma casa cadastrada nesta rua. Digite os números acima.';
+        housesGrid.appendChild(empty);
+        return;
+      }
+
+      houseKeys.forEach(num => {
+        housesGrid.appendChild(createHouseCard(num, streetData.houses[num]));
+      });
+    }
+
+    function renderHistory(streetData) {
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = '';
+
+      if (!streetData.history || !streetData.history.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'Nenhuma ação registrada recentemente.';
+        historyList.appendChild(empty);
+        return;
+      }
+
+      streetData.history.forEach(item => {
+        historyList.appendChild(createHistoryItem(item));
+      });
+    }
+
+    function render() {
+      const streetContent = document.getElementById('streetContent');
+      const currentStreetTitle = document.getElementById('currentStreetTitle');
+      const streets = getStreetNames();
+
+      renderTabs(streets);
+
+      if (!streets.length) {
+        streetContent.style.display = 'none';
+        return;
+      }
+
+      if (!activeStreet || !data[activeStreet]) {
+        activeStreet = streets[0];
+      }
+
+      ensureStreetStructure(activeStreet);
+
+      streetContent.style.display = 'block';
+      currentStreetTitle.textContent = activeStreet;
+
+      const streetData = data[activeStreet];
+      renderHouses(streetData);
+      renderHistory(streetData);
+    }
+
+    function bindEvents() {
+      const addStreetBtn = document.getElementById('addStreetBtn');
+      const addHousesBtn = document.getElementById('addHousesBtn');
+      const deleteStreetBtn = document.getElementById('deleteStreetBtn');
+      const openReportBtn = document.getElementById('openReportBtn');
+      const closeReportBtn = document.getElementById('closeReportBtn');
+      const closeReportTopBtn = document.getElementById('closeReportTopBtn');
+      const copyReportBtn = document.getElementById('copyReportBtn');
+      const streetNameInput = document.getElementById('streetNameInput');
+      const houseNumberInput = document.getElementById('houseNumberInput');
+      const reportModal = document.getElementById('reportModal');
+      const modalContent = reportModal.querySelector('.modal-content');
+
+      addStreetBtn.addEventListener('click', addStreet);
+      addHousesBtn.addEventListener('click', addHouses);
+      deleteStreetBtn.addEventListener('click', deleteCurrentStreet);
+      openReportBtn.addEventListener('click', openReport);
+      closeReportBtn.addEventListener('click', closeReport);
+      closeReportTopBtn.addEventListener('click', closeReport);
+      copyReportBtn.addEventListener('click', copyReport);
+
+      streetNameInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          addStreet();
+        }
+      });
+
+      houseNumberInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+          addHouses();
+        }
+      });
+
+      reportModal.addEventListener('click', () => {
+        closeReport();
+      });
+
+      modalContent.addEventListener('click', event => {
+        event.stopPropagation();
+      });
+
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          closeReport();
+        }
+      });
+    }
+
+    function init() {
+      data = loadData();
+      const streets = getStreetNames();
+      activeStreet = streets.length ? streets[0] : null;
+      bindEvents();
+      render();
+    }
+
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
