@@ -25,7 +25,7 @@
 
         h1 {
             font-size: 1.25rem;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
@@ -36,6 +36,28 @@
             padding: 16px;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        /* Seletor de Mês no Topo */
+        .month-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            background: #e2e8f0;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .month-selector select {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            background: white;
+            color: var(--text);
         }
 
         .street-manager {
@@ -293,6 +315,7 @@
             cursor: pointer;
         }
 
+        /* Modal de Relatório Visual */
         .modal {
             display: none;
             position: fixed;
@@ -405,6 +428,12 @@
 <div class="container">
     <h1>Controle de Visitas - Saúde</h1>
 
+    <!-- Seletor de Mês -->
+    <div class="month-selector">
+        <label for="monthSelect" style="font-size: 0.85rem; font-weight: bold; color: #475569;">Mês de Referência:</label>
+        <select id="monthSelect" onchange="switchMonth(this.value)"></select>
+    </div>
+
     <div class="street-manager">
         <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
         <button type="button" onclick="addStreet()">+ Rua</button>
@@ -437,7 +466,7 @@
         </div>
 
         <div class="history-section">
-            <h3>Histórico de Ações (Rua Atual)</h3>
+            <h3>Histórico de Ações (Mês Atual)</h3>
             <div id="historyList" class="history-list">
                 <div style="color: #94a3b8; text-align: center; padding: 8px;">Nenhuma ação registrada neste mês.</div>
             </div>
@@ -454,8 +483,8 @@
         </div>
         
         <div class="modal-body" id="pdfArea">
-            <div style="font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 4px;" id="pdfStreetName">Rua</div>
-            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 12px;">Relatório de Status e Datas das Casas</div>
+            <div style="font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 2px;" id="pdfStreetName">Rua</div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 12px;" id="pdfMonthSubtitle">Mês: </div>
 
             <div>
                 <div class="report-section-title">✅ Casas Visitadas</div>
@@ -481,23 +510,61 @@
 </div>
 
 <script>
-    let data = {};
+    // Estrutura geral: { 'YYYY-MM': { ruas: { 'NomeRua': { houses: { '10': {status, date} }, history: [] } } } }
+    let db = {};
     try {
-        data = JSON.parse(localStorage.getItem('health_visits_data_v9')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v10')) || {};
     } catch(e) {
-        data = {};
+        db = {};
     }
+
+    // Identificar o mês atual no formato YYYY-MM
+    const now = new Date();
+    const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     
+    let activeMonth = currentYearMonth;
     let activeStreet = null;
-    const streetKeys = Object.keys(data);
-    if (streetKeys.length > 0) {
-        activeStreet = streetKeys[0];
+
+    // Garantir que o mês atual existe no banco
+    if (!db[activeMonth]) {
+        db[activeMonth] = { ruas: {} };
+    }
+
+    // Se houver meses anteriores, pega a lista de ruas globalmente ou do mês mais recente para herdar no novo mês
+    function getOrCreateMonth(monthKey) {
+        if (!db[monthKey]) {
+            // Herda as ruas do mês anterior ou do último disponível para não ter que recadastrar
+            db[monthKey] = { ruas: {} };
+            const allMonths = Object.keys(db).sort();
+            if (allMonths.length > 1) {
+                const prevMonth = allMonths[allMonths.indexOf(monthKey) - 1];
+                if (prevMonth && db[prevMonth] && db[prevMonth].ruas) {
+                    Object.keys(db[prevMonth].ruas).forEach(streetName => {
+                        // Copia apenas a estrutura das casas (nomes), mas com status zerado (pendente)
+                        db[monthKey].ruas[streetName] = { houses: {}, history: [] };
+                        Object.keys(db[prevMonth].ruas[streetName].houses).forEach(houseNum => {
+                            db[monthKey].ruas[streetName].houses[houseNum] = { status: 0, date: null };
+                        });
+                    });
+                }
+            }
+        }
+        return db[monthKey];
     }
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_data_v9', JSON.stringify(data));
+            localStorage.setItem('health_visits_master_v10', JSON.stringify(db));
         } catch(e) {}
+        render();
+    }
+
+    function switchMonth(newMonth) {
+        activeMonth = newMonth;
+        getOrCreateMonth(activeMonth);
+        const ruas = db[activeMonth].ruas;
+        const streetKeys = Object.keys(ruas);
+        activeStreet = streetKeys.length > 0 ? streetKeys[0] : null;
         render();
     }
 
@@ -507,8 +574,9 @@
         const name = input.value.trim();
         if (!name) return;
 
-        if (!data[name]) {
-            data[name] = { houses: {}, history: [] };
+        let monthData = getOrCreateMonth(activeMonth);
+        if (!monthData.ruas[name]) {
+            monthData.ruas[name] = { houses: {}, history: [] };
         }
         activeStreet = name;
         input.value = '';
@@ -517,9 +585,10 @@
 
     function deleteCurrentStreet() {
         if (!activeStreet) return;
-        if (confirm(`Deseja realmente excluir a rua "${activeStreet}" e todo o seu histórico?`)) {
-            delete data[activeStreet];
-            const remaining = Object.keys(data);
+        if (confirm(`Deseja realmente excluir a rua "${activeStreet}" neste mês?`)) {
+            let monthData = getOrCreateMonth(activeMonth);
+            delete monthData.ruas[activeStreet];
+            const remaining = Object.keys(monthData.ruas);
             activeStreet = remaining.length > 0 ? remaining[0] : null;
             saveData();
         }
@@ -538,10 +607,11 @@
         if (!val) return;
 
         const numbers = val.split(',').map(n => n.trim()).filter(n => n !== '');
+        let monthData = getOrCreateMonth(activeMonth);
         
         numbers.forEach(num => {
-            if (!(num in data[activeStreet].houses)) {
-                data[activeStreet].houses[num] = { status: 0, date: null };
+            if (!(num in monthData.ruas[activeStreet].houses)) {
+                monthData.ruas[activeStreet].houses[num] = { status: 0, date: null };
             }
         });
 
@@ -553,15 +623,16 @@
         if (event && event.target && (event.target.classList.contains('delete-house') || event.target.closest('.delete-house'))) return;
         if (!activeStreet) return;
 
-        let house = data[activeStreet].houses[num];
+        let monthData = getOrCreateMonth(activeMonth);
+        let house = monthData.ruas[activeStreet].houses[num];
         if (!house) return;
         
         let nextStatus = (house.status + 1) % 3; 
         
-        let now = new Date();
-        let year = now.getFullYear();
-        let month = String(now.getMonth() + 1).padStart(2, '0');
-        let day = String(now.getDate()).padStart(2, '0');
+        let nowObj = new Date();
+        let year = nowObj.getFullYear();
+        let month = String(nowObj.getMonth() + 1).padStart(2, '0');
+        let day = String(nowObj.getDate()).padStart(2, '0');
         let dateStr = `${day}/${month}/${year}`;
 
         house.status = nextStatus;
@@ -572,11 +643,11 @@
         if (nextStatus === 1) { statusText = 'Visitada'; tagClass = 'tag-visited'; }
         if (nextStatus === 2) { statusText = 'Ausente'; tagClass = 'tag-absent'; }
 
-        if (!data[activeStreet].history) {
-            data[activeStreet].history = [];
+        if (!monthData.ruas[activeStreet].history) {
+            monthData.ruas[activeStreet].history = [];
         }
 
-        let history = data[activeStreet].history;
+        let history = monthData.ruas[activeStreet].history;
         let existingIndex = history.findIndex(item => item.house === num);
 
         if (nextStatus === 0) {
@@ -603,7 +674,8 @@
     function updateHistoryDate(houseNum, newDate) {
         if (!activeStreet) return;
         
-        let streetData = data[activeStreet];
+        let monthData = getOrCreateMonth(activeMonth);
+        let streetData = monthData.ruas[activeStreet];
         if (!streetData) return;
 
         let formattedDate = newDate;
@@ -632,11 +704,12 @@
         if (event) event.stopPropagation();
         if (!activeStreet) return;
         if (confirm(`Remover a casa ${num}?`)) {
-            if (data[activeStreet].houses) {
-                delete data[activeStreet].houses[num];
+            let monthData = getOrCreateMonth(activeMonth);
+            if (monthData.ruas[activeStreet].houses) {
+                delete monthData.ruas[activeStreet].houses[num];
             }
-            if (data[activeStreet].history) {
-                data[activeStreet].history = data[activeStreet].history.filter(item => item.house !== num);
+            if (monthData.ruas[activeStreet].history) {
+                monthData.ruas[activeStreet].history = monthData.ruas[activeStreet].history.filter(item => item.house !== num);
             }
             saveData();
         }
@@ -644,9 +717,11 @@
 
     function openReport() {
         if (!activeStreet) return;
-        const streetData = data[activeStreet];
+        let monthData = getOrCreateMonth(activeMonth);
+        const streetData = monthData.ruas[activeStreet];
         const modal = document.getElementById('reportModal');
         const pdfStreetName = document.getElementById('pdfStreetName');
+        const pdfMonthSubtitle = document.getElementById('pdfMonthSubtitle');
         const visitedGrid = document.getElementById('reportVisitedGrid');
         const absentGrid = document.getElementById('reportAbsentGrid');
         const pendingGrid = document.getElementById('reportPendingGrid');
@@ -654,6 +729,7 @@
         if (!modal) return;
 
         pdfStreetName.innerText = `Rua: ${activeStreet}`;
+        pdfMonthSubtitle.innerText = `Referência: ${formatMonthName(activeMonth)}`;
 
         let visited = [];
         let absent = [];
@@ -704,7 +780,7 @@
         const element = document.getElementById('pdfArea');
         const opt = {
             margin:       10,
-            filename:     `relatorio_visitas_${activeStreet.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_')}.pdf`,
+            filename:     `relatorio_${activeStreet.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_')}_${activeMonth}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -713,27 +789,54 @@
         html2pdf().from(element).set(opt).save();
     }
 
+    function formatMonthName(yearMonthStr) {
+        const parts = yearMonthStr.split('-');
+        if (parts.length !== 2) return yearMonthStr;
+        const year = parts[0];
+        const monthNum = parseInt(parts[1], 10);
+        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        return `${months[monthNum - 1]} de ${year}`;
+    }
+
     function render() {
+        const monthSelect = document.getElementById('monthSelect');
         const tabsContainer = document.getElementById('tabsContainer');
         const housesGrid = document.getElementById('housesGrid');
         const streetContent = document.getElementById('streetContent');
         const currentStreetTitle = document.getElementById('currentStreetTitle');
         const historyList = document.getElementById('historyList');
 
-        if (!tabsContainer || !housesGrid || !streetContent || !currentStreetTitle || !historyList) return;
+        if (!monthSelect || !tabsContainer || !housesGrid || !streetContent || !currentStreetTitle || !historyList) return;
 
+        // Preencher o seletor de meses com os meses existentes no banco + o mês atual
+        let allMonths = Object.keys(db);
+        if (!allMonths.includes(currentYearMonth)) {
+            allMonths.push(currentYearMonth);
+        }
+        allMonths.sort().reverse(); // Mais recente primeiro
+
+        monthSelect.innerHTML = '';
+        allMonths.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.innerText = formatMonthName(m);
+            if (m === activeMonth) opt.selected = true;
+            monthSelect.appendChild(opt);
+        });
+
+        let monthData = getOrCreateMonth(activeMonth);
         tabsContainer.innerHTML = '';
-        const streets = Object.keys(data);
+        const streets = Object.keys(monthData.ruas);
 
         if (streets.length === 0) {
             streetContent.style.display = 'none';
-            tabsContainer.innerHTML = '<div class="empty-state" style="width:100%">Nenhuma rua cadastrada. Adicione uma acima.</div>';
+            tabsContainer.innerHTML = '<div class="empty-state" style="width:100%">Nenhuma rua cadastrada para este mês. Adicione uma acima.</div>';
             return;
         }
 
         streetContent.style.display = 'block';
 
-        if (!activeStreet || !data[activeStreet]) {
+        if (!activeStreet || !monthData.ruas[activeStreet]) {
             activeStreet = streets[0];
         }
 
@@ -749,7 +852,7 @@
         currentStreetTitle.innerText = activeStreet;
 
         housesGrid.innerHTML = '';
-        const streetData = data[activeStreet];
+        const streetData = monthData.ruas[activeStreet];
         const houseKeys = streetData && streetData.houses ? Object.keys(streetData.houses) : [];
 
         if (houseKeys.length === 0) {
@@ -775,7 +878,7 @@
 
         historyList.innerHTML = '';
         if (!streetData.history || streetData.history.length === 0) {
-            historyList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 8px;">Nenhuma ação registrada recentemente.</div>';
+            historyList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 8px;">Nenhuma ação registrada neste mês.</div>';
         } else {
             streetData.history.forEach((item) => {
                 const historyItem = document.createElement('div');
@@ -799,6 +902,7 @@
     }
 
     window.onload = function() {
+        getOrCreateMonth(activeMonth);
         render();
     };
 </script>
