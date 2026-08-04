@@ -21,7 +21,7 @@
             color: var(--text);
             margin: 0;
             padding: 16px;
-            padding-bottom: 80px; /* Espaço para o botão flutuante */
+            padding-bottom: 80px;
         }
 
         h1 {
@@ -37,6 +37,7 @@
             padding: 16px;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            box-sizing: border-box;
         }
 
         .month-selector {
@@ -207,6 +208,7 @@
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 16px;
+            box-sizing: border-box;
             animation: fadeIn 0.2s ease;
         }
 
@@ -219,25 +221,34 @@
         .panel-group {
             display: flex;
             gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .panel-group input {
             flex: 1;
+            min-width: 0;
             padding: 8px 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 0.9rem;
+            box-sizing: border-box;
         }
 
-        .panel-group button {
+        .panel-group button.btn-plus-house {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 8px 14px;
+            width: 42px;
+            height: 38px;
             border-radius: 6px;
-            font-weight: 600;
+            font-weight: bold;
+            font-size: 1.25rem;
             cursor: pointer;
-            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         /* Grid de Casas */
@@ -409,6 +420,7 @@
             display: flex;
             flex-direction: column;
             max-height: 90vh;
+            box-sizing: border-box;
             box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
         }
 
@@ -548,13 +560,13 @@
     <div id="housesPanel" class="houses-panel">
         <h3>🏠 Adicionar casas na rua atual</h3>
         <div class="panel-group">
-            <input type="text" id="houseNumberInput" placeholder="Números (ex: 10, 12, 14 ou 22A)">
-            <button type="button" onclick="addHouses()">Adicionar</button>
+            <input type="text" id="houseNumberInput" placeholder="Números (ex: 10, 12, 14 ou 22A)" onkeydown="if(event.key==='Enter') addHouses()">
+            <button type="button" class="btn-plus-house" onclick="addHouses()" title="Adicionar">+</button>
         </div>
     </div>
 
     <div id="streetContent">
-        <!-- Barra de Ações Principais (Relatório e Excluir Rua lado a lado) -->
+        <!-- Barra de Ações Principais (Relatório e Excluir Rua Lado a Lado) -->
         <div class="action-bar">
             <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
             <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()">🗑️ Excluir Rua</button>
@@ -598,7 +610,7 @@
         </div>
         <div class="modal-body">
             <label style="font-size: 0.8rem; font-weight: bold; color: #475569;">Nome da Rua:</label>
-            <input type="text" id="modalStreetNameInput" placeholder="Ex: Rua das Flores" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; width: 100%; box-sizing: border-box;">
+            <input type="text" id="modalStreetNameInput" placeholder="Ex: Rua das Flores" onkeydown="if(event.key==='Enter') addNewStreetFromModal()" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; width: 100%; box-sizing: border-box;">
         </div>
         <div class="modal-footer">
             <button type="button" class="btn-report" onclick="addNewStreetFromModal()">Criar Rua</button>
@@ -645,7 +657,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v22')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v23')) || {};
     } catch(e) {
         db = {};
     }
@@ -681,7 +693,7 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v22', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v23', JSON.stringify(db));
         } catch(e) {}
         render();
     }
