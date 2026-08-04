@@ -510,7 +510,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v16')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v17')) || {};
     } catch(e) {
         db = {};
     }
@@ -546,7 +546,7 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v16', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v17', JSON.stringify(db));
         } catch(e) {}
         render();
     }
@@ -729,9 +729,13 @@
         if (streetData.houses) {
             Object.keys(streetData.houses).forEach(num => {
                 let h = streetData.houses[num];
-                if (h.status === 1) visited.push({ num, date: h.date || 'S/ Data' });
-                else if (h.status === 2) absent.push({ num, date: h.date || 'S/ Data' });
-                else pending.push(num);
+                if (h && h.status === 1) {
+                    visited.push({ num, date: h.date || 'S/ Data' });
+                } else if (h && h.status === 2) {
+                    absent.push({ num, date: h.date || 'S/ Data' });
+                } else {
+                    pending.push(num);
+                }
             });
         }
 
