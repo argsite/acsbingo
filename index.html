@@ -25,7 +25,7 @@
 
         h1 {
             font-size: 1.25rem;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             text-align: center;
         }
 
@@ -43,7 +43,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             background: #e2e8f0;
             padding: 8px;
             border-radius: 8px;
@@ -59,38 +59,11 @@
             color: var(--text);
         }
 
-        .street-manager {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .street-manager input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-
-        button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        button:active {
-            opacity: 0.8;
-        }
-
+        /* Seletor de Ruas Principal e Limpo */
         .street-selector-container {
             margin-bottom: 16px;
             background: #f1f5f9;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
@@ -110,7 +83,7 @@
 
         .street-selector-row select {
             flex: 1;
-            padding: 8px 12px;
+            padding: 10px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 1rem;
@@ -119,32 +92,76 @@
             color: var(--text);
         }
 
-        .street-header {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-bottom: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
-            border-radius: 8px;
-        }
-
-        .street-actions {
+        /* Botões de Ação Principal */
+        .action-bar {
             display: flex;
             gap: 8px;
-            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        button:active {
+            opacity: 0.8;
         }
 
         .btn-report {
             background: #0f172a;
-            color: white;
-            border: none;
-            padding: 6px 12px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-gear {
+            background: #e2e8f0;
+            color: #334155;
+            padding: 0 14px;
+            font-size: 1.1rem;
+        }
+        .btn-gear:hover {
+            background: #cbd5e1;
+        }
+
+        /* Painel Retrátil de Configurações / Cadastros */
+        .admin-panel {
+            display: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .admin-panel h3 {
+            font-size: 0.9rem;
+            margin: 0 0 8px 0;
+            color: #334155;
+        }
+
+        .admin-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .admin-group input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .btn-delete-street {
@@ -152,33 +169,18 @@
             border: 1px solid #fca5a5;
             color: var(--danger);
             cursor: pointer;
-            font-size: 0.8rem;
-            padding: 6px 12px;
+            font-size: 0.85rem;
+            padding: 8px 12px;
             border-radius: 6px;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            width: 100%;
+            margin-top: 4px;
         }
-
         .btn-delete-street:hover {
             background: #fecaca;
         }
 
-        .number-adder {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .number-adder input {
-            flex: 1;
-            padding: 6px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
+        /* Grid de Casas */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
@@ -190,13 +192,13 @@
             background: #ffffff;
             border: 2px solid #cbd5e1;
             border-radius: 8px;
-            height: 60px;
+            height: 65px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 1rem;
             cursor: pointer;
             user-select: none;
             position: relative;
@@ -231,11 +233,11 @@
             justify-content: center;
             cursor: pointer;
         }
-
         .delete-house:hover {
             background: rgba(0, 0, 0, 0.5);
         }
 
+        /* Legenda */
         .legend {
             display: flex;
             gap: 12px;
@@ -258,31 +260,41 @@
             border-radius: 50%;
         }
 
-        .history-section {
+        /* Histórico em Sanfona (Acordeon) */
+        .accordion {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
-            padding: 12px;
+            overflow: hidden;
             margin-top: 16px;
         }
 
-        .history-section h3 {
-            font-size: 0.9rem;
-            margin: 0 0 8px 0;
+        .accordion-header {
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
             color: #475569;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            user-select: none;
         }
 
-        .history-list {
-            max-height: 220px;
+        .accordion-body {
+            display: none;
+            padding: 10px;
+            background: white;
+            max-height: 200px;
             overflow-y: auto;
-            display: flex;
             flex-direction: column;
             gap: 6px;
             font-size: 0.8rem;
         }
 
         .history-item {
-            background: white;
+            background: #f8fafc;
             padding: 6px 10px;
             border-radius: 6px;
             border: 1px solid #e2e8f0;
@@ -308,10 +320,11 @@
             font-size: 0.75rem;
             font-family: inherit;
             color: #475569;
-            background: #f8fafc;
+            background: #fff;
             cursor: pointer;
         }
 
+        /* Modal de Relatório */
         .modal {
             display: none;
             position: fixed;
@@ -415,8 +428,13 @@
         .empty-state {
             text-align: center;
             color: #64748b;
-            padding: 24px;
+            padding: 30px;
             font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Regras exclusivas para impressão limpa em PDF / Papel */
@@ -452,36 +470,42 @@
 <div class="container">
     <h1>BINGO - Controle de Visitas</h1>
 
+    <!-- Seletor de Mês -->
     <div class="month-selector">
-        <label for="monthSelect" style="font-size: 0.85rem; font-weight: bold; color: #475569;">Mês de Referência:</label>
+        <label for="monthSelect" style="font-size: 0.85rem; font-weight: bold; color: #475569;">Mês:</label>
         <select id="monthSelect" onchange="switchMonth(this.value)"></select>
     </div>
 
-    <div class="street-manager">
-        <input type="text" id="streetNameInput" placeholder="Nome da Rua (ex: Rua das Flores)">
-        <button type="button" onclick="addStreet()">+ Rua</button>
-    </div>
-
+    <!-- Seletor de Rua Limpo -->
     <div class="street-selector-container">
-        <label for="streetSelect">Selecione a Rua:</label>
+        <label for="streetSelect">Rua Selecionada:</label>
         <div class="street-selector-row">
             <select id="streetSelect" onchange="switchStreet(this.value)"></select>
         </div>
     </div>
 
+    <!-- Barra de Ações Principais (Relatório e Botão Engrenagem de Gerenciamento) -->
+    <div class="action-bar">
+        <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
+        <button type="button" class="btn-gear" onclick="toggleAdminPanel()" title="Gerenciar Ruas e Casas">⚙️</button>
+    </div>
+
+    <!-- Painel Oculto / Retrátil de Cadastros -->
+    <div id="adminPanel" class="admin-panel">
+        <h3>Gerenciar Ruas e Casas</h3>
+        <div class="admin-group">
+            <input type="text" id="streetNameInput" placeholder="Nova Rua (ex: Rua das Flores)">
+            <button type="button" onclick="addStreet()">+ Rua</button>
+        </div>
+        <div class="admin-group">
+            <input type="text" id="houseNumberInput" placeholder="Casas (ex: 10, 12, 14 ou 22A)">
+            <button type="button" onclick="addHouses()">+ Casa(s)</button>
+        </div>
+        <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()">🗑️ Excluir Rua Atual</button>
+    </div>
+
     <div id="streetContent">
-        <div class="street-header">
-            <div class="street-actions">
-                <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
-                <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()" title="Excluir Rua">🗑️ Excluir Rua</button>
-            </div>
-        </div>
-
-        <div class="number-adder">
-            <input type="text" id="houseNumberInput" placeholder="Números (ex: 10, 12, 14 ou 22A)">
-            <button type="button" onclick="addHouses()">Adicionar Casa(s)</button>
-        </div>
-
+        <!-- Grid de Casas (Foco principal da tela) -->
         <div id="housesGrid" class="grid"></div>
 
         <div class="legend">
@@ -490,20 +514,25 @@
             <div class="legend-item"><div class="color-dot" style="background: var(--warning);"></div>Ausente</div>
         </div>
 
-        <div class="history-section">
-            <h3>Histórico de Ações (Mês Atual)</h3>
-            <div id="historyList" class="history-list">
+        <!-- Histórico em Sanfona (Acordeon) -->
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion()">
+                <span>📋 Histórico de Ações do Mês</span>
+                <span id="accordionIcon">▼</span>
+            </div>
+            <div id="accordionBody" class="accordion-body">
                 <div style="color: #94a3b8; text-align: center; padding: 8px;">Nenhuma ação registrada neste mês.</div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal de Relatório -->
 <div id="reportModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="reportModalTitle">Relatório Visual da Rua</h2>
-            <button type="button" class="btn-delete-street" onclick="closeReport()" style="font-size: 1.2rem; padding: 2px 8px;">×</button>
+            <button type="button" class="btn-delete-street" onclick="closeReport()" style="width: auto; padding: 2px 8px; font-size: 1.2rem; margin:0;">×</button>
         </div>
         
         <div class="modal-body" id="pdfArea" style="background: #ffffff; padding: 8px;">
@@ -536,7 +565,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v18')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v19')) || {};
     } catch(e) {
         db = {};
     }
@@ -572,9 +601,30 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v18', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v19', JSON.stringify(db));
         } catch(e) {}
         render();
+    }
+
+    function toggleAdminPanel() {
+        const panel = document.getElementById('adminPanel');
+        if (panel) {
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        }
+    }
+
+    function toggleAccordion() {
+        const body = document.getElementById('accordionBody');
+        const icon = document.getElementById('accordionIcon');
+        if (body && icon) {
+            if (body.style.display === 'flex') {
+                body.style.display = 'none';
+                icon.innerText = '▼';
+            } else {
+                body.style.display = 'flex';
+                icon.innerText = '▲';
+            }
+        }
     }
 
     function switchMonth(newMonth) {
@@ -597,6 +647,7 @@
         }
         activeStreet = name;
         input.value = '';
+        toggleAdminPanel(); // Fecha o painel após adicionar
         saveData();
     }
 
@@ -607,6 +658,7 @@
             delete monthData.ruas[activeStreet];
             const remaining = Object.keys(monthData.ruas);
             activeStreet = remaining.length > 0 ? remaining[0] : null;
+            toggleAdminPanel();
             saveData();
         }
     }
@@ -633,6 +685,7 @@
         });
 
         input.value = '';
+        toggleAdminPanel(); // Fecha o painel após adicionar
         saveData();
     }
 
@@ -811,9 +864,9 @@
         const streetSelect = document.getElementById('streetSelect');
         const housesGrid = document.getElementById('housesGrid');
         const streetContent = document.getElementById('streetContent');
-        const historyList = document.getElementById('historyList');
+        const accordionBody = document.getElementById('accordionBody');
 
-        if (!monthSelect || !streetSelect || !housesGrid || !streetContent || !historyList) return;
+        if (!monthSelect || !streetSelect || !housesGrid || !streetContent || !accordionBody) return;
 
         let allMonths = Object.keys(db);
         if (!allMonths.includes(currentYearMonth)) {
@@ -859,7 +912,7 @@
         const houseKeys = streetData && streetData.houses ? Object.keys(streetData.houses) : [];
 
         if (houseKeys.length === 0) {
-            housesGrid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhuma casa cadastrada nesta rua. Digite os números acima.</div>';
+            housesGrid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhuma casa cadastrada nesta rua.<br>Toque na engrenagem ⚙️ acima para cadastrar.</div>';
         } else {
             houseKeys.forEach(num => {
                 const house = streetData.houses[num];
@@ -879,9 +932,9 @@
             });
         }
 
-        historyList.innerHTML = '';
+        accordionBody.innerHTML = '';
         if (!streetData.history || streetData.history.length === 0) {
-            historyList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 8px;">Nenhuma ação registrada neste mês.</div>';
+            accordionBody.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 6px;">Nenhuma ação registrada neste mês.</div>';
         } else {
             streetData.history.forEach((item) => {
                 const historyItem = document.createElement('div');
@@ -899,7 +952,7 @@
                     <span>Casa <strong>${item.house}</strong> marcada como <span class="history-tag ${item.tagClass}">${item.statusText}</span></span>
                     <input type="date" class="date-input" value="${dateVal}" onchange="updateHistoryDate('${item.house}', this.value)">
                 `;
-                historyList.appendChild(historyItem);
+                accordionBody.appendChild(historyItem);
             });
         }
     }
