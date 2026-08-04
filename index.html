@@ -21,6 +21,7 @@
             color: var(--text);
             margin: 0;
             padding: 16px;
+            padding-bottom: 80px; /* Espaço para o botão flutuante */
         }
 
         h1 {
@@ -59,9 +60,9 @@
             color: var(--text);
         }
 
-        /* Seletor de Ruas */
+        /* Seletor de Rua */
         .street-selector-container {
-            margin-bottom: 10px;
+            margin-bottom: 14px;
             background: #f1f5f9;
             padding: 12px;
             border-radius: 8px;
@@ -90,67 +91,6 @@
             font-weight: bold;
             background: white;
             color: var(--text);
-        }
-
-        /* Link Retrátil para Adicionar Ruas / Casas */
-        .toggle-admin-link {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .toggle-admin-link button {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 4px 8px;
-        }
-        .toggle-admin-link button:hover {
-            text-decoration: underline;
-        }
-
-        /* Painel Retrátil de Cadastros Logo Abaixo */
-        .admin-panel {
-            display: none;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 16px;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .admin-panel h3 {
-            font-size: 0.85rem;
-            margin: 0 0 8px 0;
-            color: #334155;
-        }
-
-        .admin-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .admin-group input {
-            flex: 1;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        .admin-group button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.85rem;
         }
 
         /* Barra de Ações Principais (Relatório e Excluir Rua Lado a Lado) */
@@ -196,6 +136,108 @@
             background: #e2e8f0;
             color: var(--danger);
             border-color: #fca5a5;
+        }
+
+        /* Botão Flutuante (FAB) */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--primary);
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 99;
+            border: none;
+            transition: transform 0.2s ease;
+        }
+        .fab:hover {
+            transform: scale(1.05);
+        }
+
+        /* Menu de Opções Flutuantes */
+        .fab-menu {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 8px;
+            z-index: 99;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 200px;
+            border: 1px solid #e2e8f0;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .fab-menu-item {
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .fab-menu-item:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        /* Painel Retrátil para Adicionar Casas na Rua Atual */
+        .houses-panel {
+            display: none;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .houses-panel h3 {
+            font-size: 0.85rem;
+            margin: 0 0 8px 0;
+            color: #334155;
+        }
+
+        .panel-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .panel-group input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .panel-group button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
         }
 
         /* Grid de Casas */
@@ -342,7 +384,7 @@
             cursor: pointer;
         }
 
-        /* Modal de Relatório */
+        /* Modais Gerais */
         .modal {
             display: none;
             position: fixed;
@@ -361,7 +403,7 @@
         .modal-content {
             background: white;
             width: 100%;
-            max-width: 550px;
+            max-width: 450px;
             border-radius: 12px;
             padding: 16px;
             display: flex;
@@ -451,7 +493,7 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-4px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -502,21 +544,12 @@
         </div>
     </div>
 
-    <!-- Link Retrátil para Cadastros -->
-    <div class="toggle-admin-link">
-        <button type="button" onclick="toggleAdminPanel()" id="toggleAdminBtn">+ Adicionar Rua ou Casas</button>
-    </div>
-
-    <!-- Painel Retrátil de Cadastros -->
-    <div id="adminPanel" class="admin-panel">
-        <h3>Cadastrar / Gerenciar</h3>
-        <div class="admin-group">
-            <input type="text" id="streetNameInput" placeholder="Nova Rua (ex: Rua das Flores)">
-            <button type="button" onclick="addStreet()">+ Rua</button>
-        </div>
-        <div class="admin-group">
-            <input type="text" id="houseNumberInput" placeholder="Casas (ex: 10, 12, 14 ou 22A)">
-            <button type="button" onclick="addHouses()">+ Casa(s)</button>
+    <!-- Painel Retrátil para Adicionar Mais Casas na Rua Atual -->
+    <div id="housesPanel" class="houses-panel">
+        <h3>🏠 Adicionar casas na rua atual</h3>
+        <div class="panel-group">
+            <input type="text" id="houseNumberInput" placeholder="Números (ex: 10, 12, 14 ou 22A)">
+            <button type="button" onclick="addHouses()">Adicionar</button>
         </div>
     </div>
 
@@ -549,9 +582,34 @@
     </div>
 </div>
 
+<!-- Botão Flutuante (FAB) e Menu de Opções -->
+<button type="button" class="fab" onclick="toggleFabMenu()" title="Cadastros">+</button>
+<div id="fabMenu" class="fab-menu">
+    <button type="button" class="fab-menu-item" onclick="openNewStreetModal()">➕ Cadastrar Nova Rua</button>
+    <button type="button" class="fab-menu-item" onclick="toggleHousesPanel()">🏠 Adicionar Casas na Rua</button>
+</div>
+
+<!-- Modal: Cadastrar Nova Rua -->
+<div id="newStreetModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Cadastrar Nova Rua</h2>
+            <button type="button" class="btn-delete-street" onclick="closeNewStreetModal()" style="width: auto; padding: 2px 8px; font-size: 1.2rem; margin:0; flex:none;">×</button>
+        </div>
+        <div class="modal-body">
+            <label style="font-size: 0.8rem; font-weight: bold; color: #475569;">Nome da Rua:</label>
+            <input type="text" id="modalStreetNameInput" placeholder="Ex: Rua das Flores" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; width: 100%; box-sizing: border-box;">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-report" onclick="addNewStreetFromModal()">Criar Rua</button>
+            <button type="button" class="btn-delete-street" onclick="closeNewStreetModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal de Relatório -->
 <div id="reportModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 550px;">
         <div class="modal-header">
             <h2 id="reportModalTitle">Relatório Visual da Rua</h2>
             <button type="button" class="btn-delete-street" onclick="closeReport()" style="width: auto; padding: 2px 8px; font-size: 1.2rem; margin:0; flex:none;">×</button>
@@ -587,7 +645,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v21')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v22')) || {};
     } catch(e) {
         db = {};
     }
@@ -623,21 +681,81 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v21', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v22', JSON.stringify(db));
         } catch(e) {}
         render();
     }
 
-    function toggleAdminPanel() {
-        const panel = document.getElementById('adminPanel');
-        const btn = document.getElementById('toggleAdminBtn');
-        if (panel && btn) {
+    // Controles do Botão Flutuante
+    function toggleFabMenu() {
+        const menu = document.getElementById('fabMenu');
+        if (menu) {
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+    }
+
+    // Fecha o menu flutuante ao clicar fora
+    window.onclick = function(event) {
+        if (!event.target.matches('.fab') && !event.target.closest('.fab-menu')) {
+            const menu = document.getElementById('fabMenu');
+            if (menu) menu.style.display = 'none';
+        }
+    }
+
+    // Modal de Nova Rua
+    function openNewStreetModal() {
+        toggleFabMenu();
+        const modal = document.getElementById('newStreetModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('modalStreetNameInput').focus();
+            }, 100);
+        }
+    }
+
+    function closeNewStreetModal() {
+        const modal = document.getElementById('newStreetModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.getElementById('modalStreetNameInput').value = '';
+        }
+    }
+
+    function addNewStreetFromModal() {
+        const input = document.getElementById('modalStreetNameInput');
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) return;
+
+        let monthData = getOrCreateMonth(activeMonth);
+        if (!monthData.ruas[name]) {
+            monthData.ruas[name] = { houses: {}, history: [] };
+        }
+        activeStreet = name;
+        closeNewStreetModal();
+        saveData();
+
+        // Abre automaticamente o painel de casas para facilitar a inclusão dos números na rua recém-criada
+        const panel = document.getElementById('housesPanel');
+        if (panel) {
+            panel.style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('houseNumberInput').focus();
+            }, 100);
+        }
+    }
+
+    // Painel Retrátil de Adicionar Casas na Rua Atual
+    function toggleHousesPanel() {
+        toggleFabMenu();
+        const panel = document.getElementById('housesPanel');
+        if (panel) {
+            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
             if (panel.style.display === 'block') {
-                panel.style.display = 'none';
-                btn.innerText = '+ Adicionar Rua ou Casas';
-            } else {
-                panel.style.display = 'block';
-                btn.innerText = '✕ Fechar Gerenciamento';
+                setTimeout(() => {
+                    document.getElementById('houseNumberInput').focus();
+                }, 100);
             }
         }
     }
@@ -662,27 +780,6 @@
         const streetKeys = Object.keys(monthData.ruas);
         activeStreet = streetKeys.length > 0 ? streetKeys[0] : null;
         render();
-    }
-
-    function addStreet() {
-        const input = document.getElementById('streetNameInput');
-        if (!input) return;
-        const name = input.value.trim();
-        if (!name) return;
-
-        let monthData = getOrCreateMonth(activeMonth);
-        if (!monthData.ruas[name]) {
-            monthData.ruas[name] = { houses: {}, history: [] };
-        }
-        activeStreet = name;
-        input.value = '';
-        saveData(); // Salva e atualiza a tela mantendo o painel aberto
-
-        // Joga o foco automaticamente para o campo de digitar as casas
-        const houseInput = document.getElementById('houseNumberInput');
-        if (houseInput) {
-            houseInput.focus();
-        }
     }
 
     function deleteCurrentStreet() {
@@ -718,7 +815,8 @@
         });
 
         input.value = '';
-        toggleAdminPanel(); // Fecha o painel somente após adicionar as casas
+        const panel = document.getElementById('housesPanel');
+        if (panel) panel.style.display = 'none'; // Fecha o painel após adicionar
         saveData();
     }
 
@@ -945,7 +1043,7 @@
         const houseKeys = streetData && streetData.houses ? Object.keys(streetData.houses) : [];
 
         if (houseKeys.length === 0) {
-            housesGrid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhuma casa cadastrada nesta rua.<br>Toque em "+ Adicionar Rua ou Casas" acima.</div>';
+            housesGrid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhuma casa cadastrada nesta rua.<br>Toque no botão <strong>+</strong> no canto inferior direito para adicionar casas.</div>';
         } else {
             houseKeys.forEach(num => {
                 const house = streetData.houses[num];
