@@ -356,19 +356,19 @@
 
         .modal-body {
             overflow-y: auto;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            line-height: 1.4;
+            gap: 10px;
+            line-height: 1.3;
             padding: 4px;
         }
 
         .report-section-title {
             font-weight: bold;
             color: #334155;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
+            margin-bottom: 4px;
+            font-size: 0.8rem;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 2px;
         }
@@ -376,19 +376,19 @@
         .report-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
         }
 
         .report-box {
-            border-radius: 6px;
-            padding: 4px 8px;
+            border-radius: 4px;
+            padding: 3px 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.8rem;
-            min-width: 55px;
+            font-size: 0.75rem;
+            min-width: 45px;
             border: 1px solid rgba(0,0,0,0.15);
         }
         .report-box.box-visited { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
@@ -396,7 +396,7 @@
         .report-box.box-pending { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
 
         .report-box-date {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: normal;
             margin-top: 1px;
             opacity: 0.9;
@@ -480,21 +480,21 @@
             <button type="button" class="btn-delete-street" onclick="closeReport()" style="font-size: 1.2rem; padding: 2px 8px;">×</button>
         </div>
         
-        <div class="modal-body" id="pdfArea" style="background: #ffffff; padding: 10px;">
-            <div style="font-size: 1rem; font-weight: bold; color: #1e293b; margin-bottom: 2px;" id="pdfStreetName">Rua</div>
-            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 14px;" id="pdfMonthSubtitle">Mês: </div>
+        <div class="modal-body" id="pdfArea" style="background: #ffffff; padding: 8px;">
+            <div style="font-size: 0.95rem; font-weight: bold; color: #1e293b; margin-bottom: 2px;" id="pdfStreetName">Rua</div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 10px;" id="pdfMonthSubtitle">Mês: </div>
 
             <div>
                 <div class="report-section-title">✅ Casas Visitadas</div>
                 <div id="reportVisitedGrid" class="report-grid"></div>
             </div>
 
-            <div style="margin-top: 10px;">
+            <div style="margin-top: 6px;">
                 <div class="report-section-title">⚠️ Casas Ausentes</div>
                 <div id="reportAbsentGrid" class="report-grid"></div>
             </div>
 
-            <div style="margin-top: 10px;">
+            <div style="margin-top: 6px;">
                 <div class="report-section-title">⏳ Casas Pendentes</div>
                 <div id="reportPendingGrid" class="report-grid"></div>
             </div>
@@ -510,7 +510,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v15')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v16')) || {};
     } catch(e) {
         db = {};
     }
@@ -546,7 +546,7 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v15', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v16', JSON.stringify(db));
         } catch(e) {}
         render();
     }
@@ -755,7 +755,7 @@
         pending.forEach(p => {
             let box = document.createElement('div');
             box.className = 'report-box box-pending';
-            box.innerHTML = `<span>${p}</span><span class="report-box-date">Pendente</span>`;
+            box.innerHTML = `<span>${p}</span>`;
             pendingGrid.appendChild(box);
         });
 
@@ -770,7 +770,7 @@
     function downloadPDF() {
         const element = document.getElementById('pdfArea');
         const opt = {
-            margin:       10,
+            margin:       [5, 5, 5, 5],
             filename:     `relatorio_${activeStreet.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_')}_${activeMonth}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, logging: false },
