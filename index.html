@@ -587,7 +587,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v20')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v21')) || {};
     } catch(e) {
         db = {};
     }
@@ -623,7 +623,7 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v20', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v21', JSON.stringify(db));
         } catch(e) {}
         render();
     }
@@ -676,8 +676,13 @@
         }
         activeStreet = name;
         input.value = '';
-        toggleAdminPanel();
-        saveData();
+        saveData(); // Salva e atualiza a tela mantendo o painel aberto
+
+        // Joga o foco automaticamente para o campo de digitar as casas
+        const houseInput = document.getElementById('houseNumberInput');
+        if (houseInput) {
+            houseInput.focus();
+        }
     }
 
     function deleteCurrentStreet() {
@@ -713,7 +718,7 @@
         });
 
         input.value = '';
-        toggleAdminPanel();
+        toggleAdminPanel(); // Fecha o painel somente após adicionar as casas
         saveData();
     }
 
