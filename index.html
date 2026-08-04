@@ -43,7 +43,7 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             background: #e2e8f0;
             padding: 8px;
             border-radius: 8px;
@@ -59,9 +59,9 @@
             color: var(--text);
         }
 
-        /* Seletor de Ruas Principal e Limpo */
+        /* Seletor de Ruas */
         .street-selector-container {
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             background: #f1f5f9;
             padding: 12px;
             border-radius: 8px;
@@ -92,52 +92,30 @@
             color: var(--text);
         }
 
-        /* Botões de Ação Principal */
-        .action-bar {
-            display: flex;
-            gap: 8px;
+        /* Link Retrátil para Adicionar Ruas / Casas */
+        .toggle-admin-link {
+            text-align: center;
             margin-bottom: 16px;
         }
 
-        button {
-            background: var(--primary);
-            color: white;
+        .toggle-admin-link button {
+            background: none;
             border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
+            color: var(--primary);
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.9rem;
+            padding: 4px 8px;
+        }
+        .toggle-admin-link button:hover {
+            text-decoration: underline;
         }
 
-        button:active {
-            opacity: 0.8;
-        }
-
-        .btn-report {
-            background: #0f172a;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-gear {
-            background: #e2e8f0;
-            color: #334155;
-            padding: 0 14px;
-            font-size: 1.1rem;
-        }
-        .btn-gear:hover {
-            background: #cbd5e1;
-        }
-
-        /* Painel Retrátil de Configurações / Cadastros */
+        /* Painel Retrátil de Cadastros Logo Abaixo */
         .admin-panel {
             display: none;
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 16px;
@@ -145,7 +123,7 @@
         }
 
         .admin-panel h3 {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin: 0 0 8px 0;
             color: #334155;
         }
@@ -164,20 +142,60 @@
             font-size: 0.9rem;
         }
 
-        .btn-delete-street {
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
-            color: var(--danger);
-            cursor: pointer;
-            font-size: 0.85rem;
-            padding: 8px 12px;
+        .admin-group button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
             border-radius: 6px;
             font-weight: 600;
-            width: 100%;
-            margin-top: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Barra de Ações Principais (Relatório e Excluir Rua Lado a Lado) */
+        .action-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 10px 12px;
+        }
+        button:active {
+            opacity: 0.8;
+        }
+
+        .btn-report {
+            background: #0f172a;
+            color: white;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-delete-street {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         .btn-delete-street:hover {
-            background: #fecaca;
+            background: #e2e8f0;
+            color: var(--danger);
+            border-color: #fca5a5;
         }
 
         /* Grid de Casas */
@@ -476,7 +494,7 @@
         <select id="monthSelect" onchange="switchMonth(this.value)"></select>
     </div>
 
-    <!-- Seletor de Rua Limpo -->
+    <!-- Seletor de Rua -->
     <div class="street-selector-container">
         <label for="streetSelect">Rua Selecionada:</label>
         <div class="street-selector-row">
@@ -484,15 +502,14 @@
         </div>
     </div>
 
-    <!-- Barra de Ações Principais (Relatório e Botão Engrenagem de Gerenciamento) -->
-    <div class="action-bar">
-        <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
-        <button type="button" class="btn-gear" onclick="toggleAdminPanel()" title="Gerenciar Ruas e Casas">⚙️</button>
+    <!-- Link Retrátil para Cadastros -->
+    <div class="toggle-admin-link">
+        <button type="button" onclick="toggleAdminPanel()" id="toggleAdminBtn">+ Adicionar Rua ou Casas</button>
     </div>
 
-    <!-- Painel Oculto / Retrátil de Cadastros -->
+    <!-- Painel Retrátil de Cadastros -->
     <div id="adminPanel" class="admin-panel">
-        <h3>Gerenciar Ruas e Casas</h3>
+        <h3>Cadastrar / Gerenciar</h3>
         <div class="admin-group">
             <input type="text" id="streetNameInput" placeholder="Nova Rua (ex: Rua das Flores)">
             <button type="button" onclick="addStreet()">+ Rua</button>
@@ -501,11 +518,16 @@
             <input type="text" id="houseNumberInput" placeholder="Casas (ex: 10, 12, 14 ou 22A)">
             <button type="button" onclick="addHouses()">+ Casa(s)</button>
         </div>
-        <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()">🗑️ Excluir Rua Atual</button>
     </div>
 
     <div id="streetContent">
-        <!-- Grid de Casas (Foco principal da tela) -->
+        <!-- Barra de Ações Principais (Relatório e Excluir Rua lado a lado) -->
+        <div class="action-bar">
+            <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
+            <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()">🗑️ Excluir Rua</button>
+        </div>
+
+        <!-- Grid de Casas -->
         <div id="housesGrid" class="grid"></div>
 
         <div class="legend">
@@ -532,7 +554,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 id="reportModalTitle">Relatório Visual da Rua</h2>
-            <button type="button" class="btn-delete-street" onclick="closeReport()" style="width: auto; padding: 2px 8px; font-size: 1.2rem; margin:0;">×</button>
+            <button type="button" class="btn-delete-street" onclick="closeReport()" style="width: auto; padding: 2px 8px; font-size: 1.2rem; margin:0; flex:none;">×</button>
         </div>
         
         <div class="modal-body" id="pdfArea" style="background: #ffffff; padding: 8px;">
@@ -556,8 +578,8 @@
         </div>
 
         <div class="modal-footer">
-            <button type="button" onclick="window.print()">🖨️ Salvar como PDF / Imprimir</button>
-            <button type="button" style="background: #64748b;" onclick="closeReport()">Fechar</button>
+            <button type="button" class="btn-report" onclick="window.print()">🖨️ Salvar como PDF / Imprimir</button>
+            <button type="button" class="btn-delete-street" onclick="closeReport()">Fechar</button>
         </div>
     </div>
 </div>
@@ -565,7 +587,7 @@
 <script>
     let db = {};
     try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v19')) || {};
+        db = JSON.parse(localStorage.getItem('health_visits_master_v20')) || {};
     } catch(e) {
         db = {};
     }
@@ -601,15 +623,22 @@
 
     function saveData() {
         try {
-            localStorage.setItem('health_visits_master_v19', JSON.stringify(db));
+            localStorage.setItem('health_visits_master_v20', JSON.stringify(db));
         } catch(e) {}
         render();
     }
 
     function toggleAdminPanel() {
         const panel = document.getElementById('adminPanel');
-        if (panel) {
-            panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+        const btn = document.getElementById('toggleAdminBtn');
+        if (panel && btn) {
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
+                btn.innerText = '+ Adicionar Rua ou Casas';
+            } else {
+                panel.style.display = 'block';
+                btn.innerText = '✕ Fechar Gerenciamento';
+            }
         }
     }
 
@@ -647,7 +676,7 @@
         }
         activeStreet = name;
         input.value = '';
-        toggleAdminPanel(); // Fecha o painel após adicionar
+        toggleAdminPanel();
         saveData();
     }
 
@@ -658,7 +687,6 @@
             delete monthData.ruas[activeStreet];
             const remaining = Object.keys(monthData.ruas);
             activeStreet = remaining.length > 0 ? remaining[0] : null;
-            toggleAdminPanel();
             saveData();
         }
     }
@@ -685,7 +713,7 @@
         });
 
         input.value = '';
-        toggleAdminPanel(); // Fecha o painel após adicionar
+        toggleAdminPanel();
         saveData();
     }
 
@@ -912,7 +940,7 @@
         const houseKeys = streetData && streetData.houses ? Object.keys(streetData.houses) : [];
 
         if (houseKeys.length === 0) {
-            housesGrid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhuma casa cadastrada nesta rua.<br>Toque na engrenagem ⚙️ acima para cadastrar.</div>';
+            housesGrid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhuma casa cadastrada nesta rua.<br>Toque em "+ Adicionar Rua ou Casas" acima.</div>';
         } else {
             houseKeys.forEach(num => {
                 const house = streetData.houses[num];
