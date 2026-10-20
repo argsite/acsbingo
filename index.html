@@ -655,16 +655,14 @@
 </div>
 
 <script>
-    let db = {};
-    try {
-        db = JSON.parse(localStorage.getItem('health_visits_master_v23')) || {};
-    } catch(e) {
-        db = {};
-    }
+    // =====================================================================
+    // COLE A URL QUE O GOOGLE APPS SCRIPT GEROU PARA VOCÊ AQUI:
+    // =====================================================================
+    const API_URL = "SUA_URL_DO_APP_DA_WEB_AQUI"; 
 
+    let db = {};
     const now = new Date();
     const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    
     let activeMonth = currentYearMonth;
     let activeStreet = null;
 
@@ -691,11 +689,20 @@
         return db[monthKey];
     }
 
+    // Função para salvar dados na nuvem (Google Sheets) e localmente
     function saveData() {
-        try {
-            localStorage.setItem('health_visits_master_v23', JSON.stringify(db));
-        } catch(e) {}
+        // Salva uma cópia local para evitar perda em caso de falha de rede
+        try { localStorage.setItem('health_visits_master_v23', JSON.stringify(db)); } catch(e) {}
         render();
+
+        if (API_URL !== "SUA_URL_DO_APP_DA_WEB_AQUI") {
+            // Envia os dados para a Planilha do Google
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(db),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' } // text/plain evita erro de CORS no Apps Script
+            }).catch(err => console.error("Erro ao salvar no Sheets:", err));
+        }
     }
 
     // Controles do Botão Flutuante
@@ -1100,9 +1107,31 @@
         }
     }
 
-    window.onload = function() {
+    // Carregamento Inicial via Google Sheets
+    window.onload = async function() {
+        // Carrega da cópia local temporariamente para que a interface carregue instantaneamente
+        try { 
+            db = JSON.parse(localStorage.getItem('health_visits_master_v23')) || {}; 
+        } catch(e) { db = {}; }
         getOrCreateMonth(activeMonth);
         render();
+
+        if (API_URL !== "https://script.google.com/macros/s/AKfycbxIxiGUgtowRkwYuCfTOF84Y67PRhtc1nrGhmd7-spVWBPmjp82SAYmNEm5CiAlua0jVQ/exec") {
+            // Agora busca a versão oficial que está na planilha
+            try {
+                const response = await fetch(API_URL);
+                const sheetData = await response.json();
+                if (Object.keys(sheetData).length > 0) {
+                    db = sheetData;
+                    getOrCreateMonth(activeMonth);
+                    render();
+                    // Atualiza o localstorage com os dados frescos da nuvem
+                    localStorage.setItem('health_visits_master_v23', JSON.stringify(db));
+                }
+            } catch(err) {
+                console.error("Erro ao puxar dados do Sheets. Usando dados locais.", err);
+            }
+        }
     };
 </script>
 
