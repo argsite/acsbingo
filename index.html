@@ -695,7 +695,7 @@
         try { localStorage.setItem('health_visits_master_v23', JSON.stringify(db)); } catch(e) {}
         render();
 
-        if (API_URL !== "SUA_URL_DO_APP_DA_WEB_AQUI") {
+        if (API_URL !== "https://script.google.com/macros/s/AKfycbxIxiGUgtowRkwYuCfTOF84Y67PRhtc1nrGhmd7-spVWBPmjp82SAYmNEm5CiAlua0jVQ/exec") {
             // Envia os dados para a Planilha do Google
             fetch(API_URL, {
                 method: 'POST',
