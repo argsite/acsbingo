@@ -40,25 +40,42 @@
             box-sizing: border-box;
         }
 
-        .month-selector {
+        /* Seletores de Mês e Microárea */
+        .top-selectors {
             display: flex;
-            justify-content: center;
-            align-items: center;
             gap: 8px;
             margin-bottom: 14px;
             background: #e2e8f0;
             padding: 8px;
             border-radius: 8px;
+            flex-wrap: wrap;
         }
 
-        .month-selector select {
-            padding: 6px 12px;
+        .selector-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 140px;
+        }
+
+        .selector-group label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #475569;
+            white-space: nowrap;
+        }
+
+        .selector-group select {
+            flex: 1;
+            padding: 6px 10px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             background: white;
             color: var(--text);
+            width: 100%;
         }
 
         /* Seletor de Rua */
@@ -94,7 +111,7 @@
             color: var(--text);
         }
 
-        /* Barra de Ações Principais (Relatório e Excluir Rua Lado a Lado) */
+        /* Barra de Ações Principais */
         .action-bar {
             display: flex;
             gap: 8px;
@@ -176,7 +193,7 @@
             z-index: 99;
             flex-direction: column;
             gap: 4px;
-            min-width: 200px;
+            min-width: 210px;
             border: 1px solid #e2e8f0;
             animation: fadeIn 0.2s ease;
         }
@@ -200,7 +217,7 @@
             color: var(--primary);
         }
 
-        /* Painel Retrátil para Adicionar Casas na Rua Atual */
+        /* Painel Retrátil para Adicionar Casas */
         .houses-panel {
             display: none;
             background: #f8fafc;
@@ -331,7 +348,7 @@
             border-radius: 50%;
         }
 
-        /* Histórico em Sanfona (Acordeon) */
+        /* Histórico em Sanfona */
         .accordion {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -395,7 +412,7 @@
             cursor: pointer;
         }
 
-        /* Modais Gerais */
+        /* Modais */
         .modal {
             display: none;
             position: fixed;
@@ -509,31 +526,12 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Regras exclusivas para impressão limpa em PDF / Papel */
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            #pdfArea, #pdfArea * {
-                visibility: visible;
-            }
-            #pdfArea {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                padding: 0;
-            }
-            .modal {
-                display: block !important;
-                position: absolute;
-                background: white !important;
-            }
-            .modal-content {
-                box-shadow: none !important;
-                max-width: 100% !important;
-                padding: 0 !important;
-            }
+            body * { visibility: hidden; }
+            #pdfArea, #pdfArea * { visibility: visible; }
+            #pdfArea { position: absolute; left: 0; top: 0; width: 100%; padding: 0; }
+            .modal { display: block !important; position: absolute; background: white !important; }
+            .modal-content { box-shadow: none !important; max-width: 100% !important; padding: 0 !important; }
         }
     </style>
 </head>
@@ -542,10 +540,16 @@
 <div class="container">
     <h1>BINGO - Controle de Visitas</h1>
 
-    <!-- Seletor de Mês -->
-    <div class="month-selector">
-        <label for="monthSelect" style="font-size: 0.85rem; font-weight: bold; color: #475569;">Mês:</label>
-        <select id="monthSelect" onchange="switchMonth(this.value)"></select>
+    <!-- Seletores Superiores: Mês e Microárea -->
+    <div class="top-selectors">
+        <div class="selector-group">
+            <label for="monthSelect">Mês:</label>
+            <select id="monthSelect" onchange="switchMonth(this.value)"></select>
+        </div>
+        <div class="selector-group">
+            <label for="microareaSelect">Microárea:</label>
+            <select id="microareaSelect" onchange="switchMicroarea(this.value)"></select>
+        </div>
     </div>
 
     <!-- Seletor de Rua -->
@@ -556,7 +560,7 @@
         </div>
     </div>
 
-    <!-- Painel Retrátil para Adicionar Mais Casas na Rua Atual -->
+    <!-- Painel Retrátil para Adicionar Casas -->
     <div id="housesPanel" class="houses-panel">
         <h3>🏠 Adicionar casas na rua atual</h3>
         <div class="panel-group">
@@ -566,7 +570,7 @@
     </div>
 
     <div id="streetContent">
-        <!-- Barra de Ações Principais (Relatório e Excluir Rua Lado a Lado) -->
+        <!-- Barra de Ações -->
         <div class="action-bar">
             <button type="button" class="btn-report" onclick="openReport()">📄 Relatório Visual</button>
             <button type="button" class="btn-delete-street" onclick="deleteCurrentStreet()">🗑️ Excluir Rua</button>
@@ -581,7 +585,7 @@
             <div class="legend-item"><div class="color-dot" style="background: var(--warning);"></div>Ausente</div>
         </div>
 
-        <!-- Histórico em Sanfona (Acordeon) -->
+        <!-- Histórico em Sanfona -->
         <div class="accordion">
             <div class="accordion-header" onclick="toggleAccordion()">
                 <span>📋 Histórico de Ações do Mês</span>
@@ -594,11 +598,30 @@
     </div>
 </div>
 
-<!-- Botão Flutuante (FAB) e Menu de Opções -->
+<!-- Botão Flutuante (FAB) e Menu -->
 <button type="button" class="fab" onclick="toggleFabMenu()" title="Cadastros">+</button>
 <div id="fabMenu" class="fab-menu">
+    <button type="button" class="fab-menu-item" onclick="openNewMicroareaModal()">📍 Cadastrar Microárea</button>
     <button type="button" class="fab-menu-item" onclick="openNewStreetModal()">➕ Cadastrar Nova Rua</button>
     <button type="button" class="fab-menu-item" onclick="toggleHousesPanel()">🏠 Adicionar Casas na Rua</button>
+</div>
+
+<!-- Modal: Cadastrar Nova Microárea -->
+<div id="newMicroareaModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Cadastrar Nova Microárea</h2>
+            <button type="button" class="btn-delete-street" onclick="closeNewMicroareaModal()" style="width: auto; padding: 2px 8px; font-size: 1.2rem; margin:0; flex:none;">×</button>
+        </div>
+        <div class="modal-body">
+            <label style="font-size: 0.8rem; font-weight: bold; color: #475569;">Nome ou Número da Microárea:</label>
+            <input type="text" id="modalMicroareaNameInput" placeholder="Ex: Microárea 07 ou 07" onkeydown="if(event.key==='Enter') addNewMicroareaFromModal()" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; width: 100%; box-sizing: border-box;">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-report" onclick="addNewMicroareaFromModal()">Criar Microárea</button>
+            <button type="button" class="btn-delete-street" onclick="closeNewMicroareaModal()">Cancelar</button>
+        </div>
+    </div>
 </div>
 
 <!-- Modal: Cadastrar Nova Rua -->
@@ -628,6 +651,7 @@
         </div>
         
         <div class="modal-body" id="pdfArea" style="background: #ffffff; padding: 8px;">
+            <div style="font-size: 0.85rem; font-weight: bold; color: var(--primary);" id="pdfMicroareaName">Microárea</div>
             <div style="font-size: 1.1rem; font-weight: bold; color: #1e293b; margin-bottom: 2px;" id="pdfStreetName">Rua</div>
             <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 14px;" id="pdfMonthSubtitle">Mês: </div>
 
@@ -655,65 +679,90 @@
 </div>
 
 <script>
-    // =====================================================================
-    // COLE A URL QUE O GOOGLE APPS SCRIPT GEROU PARA VOCÊ AQUI:
-    // =====================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbxIxiGUgtowRkwYuCfTOF84Y67PRhtc1nrGhmd7-spVWBPmjp82SAYmNEm5CiAlua0jVQ/exec"; 
+
+    const DEFAULT_MICROAREAS = ["Microárea 03", "Microárea 04", "Microárea 05", "Microárea 06"];
 
     let db = {};
     const now = new Date();
     const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     let activeMonth = currentYearMonth;
+    let activeMicroarea = DEFAULT_MICROAREAS[0];
     let activeStreet = null;
-
-    if (!db[activeMonth]) {
-        db[activeMonth] = { ruas: {} };
-    }
 
     function getOrCreateMonth(monthKey) {
         if (!db[monthKey]) {
-            db[monthKey] = { ruas: {} };
-            const allMonths = Object.keys(db).sort();
-            if (allMonths.length > 1) {
-                const prevMonth = allMonths[allMonths.indexOf(monthKey) - 1];
-                if (prevMonth && db[prevMonth] && db[prevMonth].ruas) {
-                    Object.keys(db[prevMonth].ruas).forEach(streetName => {
-                        db[monthKey].ruas[streetName] = { houses: {}, history: [] };
-                        Object.keys(db[prevMonth].ruas[streetName].houses).forEach(houseNum => {
-                            db[monthKey].ruas[streetName].houses[houseNum] = { status: 0, date: null };
+            db[monthKey] = { microareas: {} };
+            DEFAULT_MICROAREAS.forEach(ma => {
+                db[monthKey].microareas[ma] = { ruas: {} };
+            });
+
+            // Herda a estrutura do mês anterior se existir
+            const allMonths = Object.keys(db).filter(m => m !== monthKey).sort();
+            if (allMonths.length > 0) {
+                const prevMonth = allMonths[allMonths.length - 1];
+                if (prevMonth && db[prevMonth] && db[prevMonth].microareas) {
+                    let prevMA = db[prevMonth].microareas;
+                    Object.keys(prevMA).forEach(maName => {
+                        if (!db[monthKey].microareas[maName]) {
+                            db[monthKey].microareas[maName] = { ruas: {} };
+                        }
+                        Object.keys(prevMA[maName].ruas || {}).forEach(streetName => {
+                            db[monthKey].microareas[maName].ruas[streetName] = { houses: {}, history: [] };
+                            Object.keys(prevMA[maName].ruas[streetName].houses || {}).forEach(houseNum => {
+                                db[monthKey].microareas[maName].ruas[streetName].houses[houseNum] = { status: 0, date: null };
+                            });
                         });
                     });
                 }
             }
         }
+
+        // Suporte para migrar estrutura antiga (ruas direto no mês) para Microárea 03
+        if (db[monthKey].ruas && !db[monthKey].microareas) {
+            const oldRuas = db[monthKey].ruas;
+            db[monthKey].microareas = {};
+            DEFAULT_MICROAREAS.forEach(ma => {
+                db[monthKey].microareas[ma] = { ruas: {} };
+            });
+            db[monthKey].microareas["Microárea 03"].ruas = oldRuas;
+            delete db[monthKey].ruas;
+        }
+
+        // Garante que as microáreas padrão estejam presentes
+        if (!db[monthKey].microareas) {
+            db[monthKey].microareas = {};
+        }
+        DEFAULT_MICROAREAS.forEach(ma => {
+            if (!db[monthKey].microareas[ma]) {
+                db[monthKey].microareas[ma] = { ruas: {} };
+            }
+        });
+
         return db[monthKey];
     }
 
-    // Função para salvar dados na nuvem (Google Sheets) e localmente
-function saveData() {
-    // 1. Salva uma cópia local por segurança
-    try { 
-        localStorage.setItem('health_visits_master_v23', JSON.stringify(db)); 
-    } catch(e) {}
-    
-    render();
+    function saveData() {
+        try { 
+            localStorage.setItem('health_visits_master_v23', JSON.stringify(db)); 
+        } catch(e) {}
+        
+        render();
 
-    // 2. Envia para a planilha (com mode: 'no-cors' para evitar bloqueios de CORS)
-    fetch(API_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify(db)
-    }).then(() => {
-        console.log("Dados enviados para o Apps Script com sucesso!");
-    }).catch(err => {
-        console.error("Erro ao salvar no Sheets:", err);
-    });
-}
+        fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify(db)
+        }).then(() => {
+            console.log("Dados enviados com sucesso para o Sheets!");
+        }).catch(err => {
+            console.error("Erro ao salvar no Sheets:", err);
+        });
+    }
 
-    // Controles do Botão Flutuante
     function toggleFabMenu() {
         const menu = document.getElementById('fabMenu');
         if (menu) {
@@ -721,7 +770,6 @@ function saveData() {
         }
     }
 
-    // Fecha o menu flutuante ao clicar fora
     window.onclick = function(event) {
         if (!event.target.matches('.fab') && !event.target.closest('.fab-menu')) {
             const menu = document.getElementById('fabMenu');
@@ -729,7 +777,49 @@ function saveData() {
         }
     }
 
-    // Modal de Nova Rua
+    // Modal Nova Microárea
+    function openNewMicroareaModal() {
+        toggleFabMenu();
+        const modal = document.getElementById('newMicroareaModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('modalMicroareaNameInput').focus();
+            }, 100);
+        }
+    }
+
+    function closeNewMicroareaModal() {
+        const modal = document.getElementById('newMicroareaModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.getElementById('modalMicroareaNameInput').value = '';
+        }
+    }
+
+    function addNewMicroareaFromModal() {
+        const input = document.getElementById('modalMicroareaNameInput');
+        if (!input) return;
+        let name = input.value.trim();
+        if (!name) return;
+
+        if (/^\d+$/.test(name)) {
+            name = `Microárea ${name.padStart(2, '0')}`;
+        }
+
+        let monthData = getOrCreateMonth(activeMonth);
+        if (!monthData.microareas[name]) {
+            monthData.microareas[name] = { ruas: {} };
+        }
+        activeMicroarea = name;
+        const streetKeys = Object.keys(monthData.microareas[name].ruas);
+        activeStreet = streetKeys.length > 0 ? streetKeys[0] : null;
+
+        closeNewMicroareaModal();
+        saveData();
+    }
+
+    // Modal Nova Rua
     function openNewStreetModal() {
         toggleFabMenu();
         const modal = document.getElementById('newStreetModal');
@@ -756,14 +846,16 @@ function saveData() {
         if (!name) return;
 
         let monthData = getOrCreateMonth(activeMonth);
-        if (!monthData.ruas[name]) {
-            monthData.ruas[name] = { houses: {}, history: [] };
+        if (!monthData.microareas[activeMicroarea]) {
+            monthData.microareas[activeMicroarea] = { ruas: {} };
+        }
+        if (!monthData.microareas[activeMicroarea].ruas[name]) {
+            monthData.microareas[activeMicroarea].ruas[name] = { houses: {}, history: [] };
         }
         activeStreet = name;
         closeNewStreetModal();
         saveData();
 
-        // Abre automaticamente o painel de casas para facilitar a inclusão dos números na rua recém-criada
         const panel = document.getElementById('housesPanel');
         if (panel) {
             panel.style.display = 'block';
@@ -773,7 +865,6 @@ function saveData() {
         }
     }
 
-    // Painel Retrátil de Adicionar Casas na Rua Atual
     function toggleHousesPanel() {
         toggleFabMenu();
         const panel = document.getElementById('housesPanel');
@@ -804,20 +895,21 @@ function saveData() {
     function switchMonth(newMonth) {
         activeMonth = newMonth;
         let monthData = getOrCreateMonth(activeMonth);
-        const streetKeys = Object.keys(monthData.ruas);
+        const maKeys = Object.keys(monthData.microareas);
+        if (!maKeys.includes(activeMicroarea)) {
+            activeMicroarea = maKeys.length > 0 ? maKeys[0] : DEFAULT_MICROAREAS[0];
+        }
+        const streetKeys = Object.keys(monthData.microareas[activeMicroarea]?.ruas || {});
         activeStreet = streetKeys.length > 0 ? streetKeys[0] : null;
         render();
     }
 
-    function deleteCurrentStreet() {
-        if (!activeStreet) return;
-        if (confirm(`Deseja realmente excluir a rua "${activeStreet}" neste mês?`)) {
-            let monthData = getOrCreateMonth(activeMonth);
-            delete monthData.ruas[activeStreet];
-            const remaining = Object.keys(monthData.ruas);
-            activeStreet = remaining.length > 0 ? remaining[0] : null;
-            saveData();
-        }
+    function switchMicroarea(newMA) {
+        activeMicroarea = newMA;
+        let monthData = getOrCreateMonth(activeMonth);
+        const streetKeys = Object.keys(monthData.microareas[activeMicroarea]?.ruas || {});
+        activeStreet = streetKeys.length > 0 ? streetKeys[0] : null;
+        render();
     }
 
     function switchStreet(name) {
@@ -825,8 +917,19 @@ function saveData() {
         render();
     }
 
+    function deleteCurrentStreet() {
+        if (!activeStreet || !activeMicroarea) return;
+        if (confirm(`Deseja realmente excluir a rua "${activeStreet}" na ${activeMicroarea} neste mês?`)) {
+            let monthData = getOrCreateMonth(activeMonth);
+            delete monthData.microareas[activeMicroarea].ruas[activeStreet];
+            const remaining = Object.keys(monthData.microareas[activeMicroarea].ruas);
+            activeStreet = remaining.length > 0 ? remaining[0] : null;
+            saveData();
+        }
+    }
+
     function addHouses() {
-        if (!activeStreet) return;
+        if (!activeStreet || !activeMicroarea) return;
         const input = document.getElementById('houseNumberInput');
         if (!input) return;
         const val = input.value.trim();
@@ -834,29 +937,33 @@ function saveData() {
 
         const numbers = val.split(',').map(n => n.trim()).filter(n => n !== '');
         let monthData = getOrCreateMonth(activeMonth);
-        
+        let maData = monthData.microareas[activeMicroarea];
+        if (!maData || !maData.ruas[activeStreet]) return;
+
         numbers.forEach(num => {
-            if (!(num in monthData.ruas[activeStreet].houses)) {
-                monthData.ruas[activeStreet].houses[num] = { status: 0, date: null };
+            if (!(num in maData.ruas[activeStreet].houses)) {
+                maData.ruas[activeStreet].houses[num] = { status: 0, date: null };
             }
         });
 
         input.value = '';
         const panel = document.getElementById('housesPanel');
-        if (panel) panel.style.display = 'none'; // Fecha o painel após adicionar
+        if (panel) panel.style.display = 'none';
         saveData();
     }
 
     function cycleHouseStatus(num, event) {
         if (event && event.target && (event.target.classList.contains('delete-house') || event.target.closest('.delete-house'))) return;
-        if (!activeStreet) return;
+        if (!activeStreet || !activeMicroarea) return;
 
         let monthData = getOrCreateMonth(activeMonth);
-        let house = monthData.ruas[activeStreet].houses[num];
+        let streetObj = monthData.microareas[activeMicroarea]?.ruas[activeStreet];
+        if (!streetObj) return;
+        let house = streetObj.houses[num];
         if (!house) return;
-        
+
         let nextStatus = (house.status + 1) % 3; 
-        
+
         let nowObj = new Date();
         let year = nowObj.getFullYear();
         let month = String(nowObj.getMonth() + 1).padStart(2, '0');
@@ -871,11 +978,11 @@ function saveData() {
         if (nextStatus === 1) { statusText = 'Visitada'; tagClass = 'tag-visited'; }
         if (nextStatus === 2) { statusText = 'Ausente'; tagClass = 'tag-absent'; }
 
-        if (!monthData.ruas[activeStreet].history) {
-            monthData.ruas[activeStreet].history = [];
+        if (!streetObj.history) {
+            streetObj.history = [];
         }
 
-        let history = monthData.ruas[activeStreet].history;
+        let history = streetObj.history;
         let existingIndex = history.findIndex(item => item.house === num);
 
         if (nextStatus === 0) {
@@ -900,10 +1007,10 @@ function saveData() {
     }
 
     function updateHistoryDate(houseNum, newDate) {
-        if (!activeStreet) return;
+        if (!activeStreet || !activeMicroarea) return;
         
         let monthData = getOrCreateMonth(activeMonth);
-        let streetData = monthData.ruas[activeStreet];
+        let streetData = monthData.microareas[activeMicroarea]?.ruas[activeStreet];
         if (!streetData) return;
 
         let formattedDate = newDate;
@@ -930,32 +1037,35 @@ function saveData() {
 
     function deleteHouse(num, event) {
         if (event) event.stopPropagation();
-        if (!activeStreet) return;
+        if (!activeStreet || !activeMicroarea) return;
         if (confirm(`Remover a casa ${num}?`)) {
             let monthData = getOrCreateMonth(activeMonth);
-            if (monthData.ruas[activeStreet].houses) {
-                delete monthData.ruas[activeStreet].houses[num];
+            let streetData = monthData.microareas[activeMicroarea]?.ruas[activeStreet];
+            if (streetData && streetData.houses) {
+                delete streetData.houses[num];
             }
-            if (monthData.ruas[activeStreet].history) {
-                monthData.ruas[activeStreet].history = monthData.ruas[activeStreet].history.filter(item => item.house !== num);
+            if (streetData && streetData.history) {
+                streetData.history = streetData.history.filter(item => item.house !== num);
             }
             saveData();
         }
     }
 
     function openReport() {
-        if (!activeStreet) return;
+        if (!activeStreet || !activeMicroarea) return;
         let monthData = getOrCreateMonth(activeMonth);
-        const streetData = monthData.ruas[activeStreet];
+        const streetData = monthData.microareas[activeMicroarea]?.ruas[activeStreet];
         const modal = document.getElementById('reportModal');
+        const pdfMicroareaName = document.getElementById('pdfMicroareaName');
         const pdfStreetName = document.getElementById('pdfStreetName');
         const pdfMonthSubtitle = document.getElementById('pdfMonthSubtitle');
         const visitedGrid = document.getElementById('reportVisitedGrid');
         const absentGrid = document.getElementById('reportAbsentGrid');
         const pendingGrid = document.getElementById('reportPendingGrid');
         
-        if (!modal) return;
+        if (!modal || !streetData) return;
 
+        pdfMicroareaName.innerText = activeMicroarea;
         pdfStreetName.innerText = `Rua: ${activeStreet}`;
         pdfMonthSubtitle.innerText = `Referência: ${formatMonthName(activeMonth)}`;
 
@@ -1019,13 +1129,15 @@ function saveData() {
 
     function render() {
         const monthSelect = document.getElementById('monthSelect');
+        const microareaSelect = document.getElementById('microareaSelect');
         const streetSelect = document.getElementById('streetSelect');
         const housesGrid = document.getElementById('housesGrid');
         const streetContent = document.getElementById('streetContent');
         const accordionBody = document.getElementById('accordionBody');
 
-        if (!monthSelect || !streetSelect || !housesGrid || !streetContent || !accordionBody) return;
+        if (!monthSelect || !microareaSelect || !streetSelect || !housesGrid || !streetContent || !accordionBody) return;
 
+        // Renderiza Mês
         let allMonths = Object.keys(db);
         if (!allMonths.includes(currentYearMonth)) {
             allMonths.push(currentYearMonth);
@@ -1042,17 +1154,34 @@ function saveData() {
         });
 
         let monthData = getOrCreateMonth(activeMonth);
-        const streets = Object.keys(monthData.ruas);
+
+        // Renderiza Microárea
+        const microareas = Object.keys(monthData.microareas);
+        microareaSelect.innerHTML = '';
+        microareas.forEach(ma => {
+            const opt = document.createElement('option');
+            opt.value = ma;
+            opt.innerText = ma;
+            if (ma === activeMicroarea) opt.selected = true;
+            microareaSelect.appendChild(opt);
+        });
+
+        if (!activeMicroarea || !monthData.microareas[activeMicroarea]) {
+            activeMicroarea = microareas[0];
+        }
+
+        // Renderiza Rua
+        const streets = Object.keys(monthData.microareas[activeMicroarea]?.ruas || {});
 
         if (streets.length === 0) {
             streetContent.style.display = 'none';
-            streetSelect.innerHTML = '<option value="">Nenhuma rua cadastrada</option>';
+            streetSelect.innerHTML = '<option value="">Nenhuma rua cadastrada nesta microárea</option>';
             return;
         }
 
         streetContent.style.display = 'block';
 
-        if (!activeStreet || !monthData.ruas[activeStreet]) {
+        if (!activeStreet || !monthData.microareas[activeMicroarea].ruas[activeStreet]) {
             activeStreet = streets[0];
         }
 
@@ -1065,8 +1194,9 @@ function saveData() {
             streetSelect.appendChild(opt);
         });
 
+        // Renderiza Casas
         housesGrid.innerHTML = '';
-        const streetData = monthData.ruas[activeStreet];
+        const streetData = monthData.microareas[activeMicroarea].ruas[activeStreet];
         const houseKeys = streetData && streetData.houses ? Object.keys(streetData.houses) : [];
 
         if (houseKeys.length === 0) {
@@ -1090,8 +1220,9 @@ function saveData() {
             });
         }
 
+        // Renderiza Histórico
         accordionBody.innerHTML = '';
-        if (!streetData.history || streetData.history.length === 0) {
+        if (!streetData || !streetData.history || streetData.history.length === 0) {
             accordionBody.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 6px;">Nenhuma ação registrada neste mês.</div>';
         } else {
             streetData.history.forEach((item) => {
@@ -1115,17 +1246,14 @@ function saveData() {
         }
     }
 
-    // Carregamento Inicial via Google Sheets
-    // Carregamento Inicial via Google Sheets
+    // Carregamento Inicial
     window.onload = async function() {
-        // Carrega da cópia local temporariamente para que a interface carregue instantaneamente
         try { 
             db = JSON.parse(localStorage.getItem('health_visits_master_v23')) || {}; 
         } catch(e) { db = {}; }
         getOrCreateMonth(activeMonth);
         render();
 
-        // Agora busca a versão oficial que está na planilha (Sem o "if")
         try {
             const response = await fetch(API_URL);
             const sheetData = await response.json();
@@ -1133,7 +1261,6 @@ function saveData() {
                 db = sheetData;
                 getOrCreateMonth(activeMonth);
                 render();
-                // Atualiza o localstorage com os dados frescos da nuvem
                 localStorage.setItem('health_visits_master_v23', JSON.stringify(db));
             }
         } catch(err) {
