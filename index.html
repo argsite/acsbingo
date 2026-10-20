@@ -690,17 +690,28 @@
     }
 
     // Função para salvar dados na nuvem (Google Sheets) e localmente
-    function saveData() {
-        // Salva uma cópia local para evitar perda em caso de falha de rede
-        try { localStorage.setItem('health_visits_master_v23', JSON.stringify(db)); } catch(e) {}
-        render();
+function saveData() {
+    // 1. Salva uma cópia local por segurança
+    try { 
+        localStorage.setItem('health_visits_master_v23', JSON.stringify(db)); 
+    } catch(e) {}
+    
+    render();
 
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify(db),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-        }).catch(err => console.error("Erro ao salvar no Sheets:", err));
-    }
+    // 2. Envia para a planilha (com mode: 'no-cors' para evitar bloqueios de CORS)
+    fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(db)
+    }).then(() => {
+        console.log("Dados enviados para o Apps Script com sucesso!");
+    }).catch(err => {
+        console.error("Erro ao salvar no Sheets:", err);
+    });
+}
 
     // Controles do Botão Flutuante
     function toggleFabMenu() {
